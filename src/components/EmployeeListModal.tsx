@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -42,10 +41,10 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
       const currentDate = new Date(startDate);
       currentDate.setDate(currentDate.getDate() + dateOffset);
       
-      // Special entry for July 18, 2025
+      // Special entry for July 18, 2025 - Updated name
       if (i === 500) {
         data.push({
-          nama: 'Rama Verdianto',
+          nama: 'Rama Verdianto A/n Siti Aminah',
           cabang: 'Bandung',
           tanggalPencairan: '18/07/2025'
         });

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Building2, User, Search, HelpCircle, Home } from 'lucide-react';
+import { User, HelpCircle, Home } from 'lucide-react';
 
 const Header = () => {
   return (
@@ -9,11 +9,15 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 banking-gradient rounded-lg flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center">
+              <img 
+                src="/lovable-uploads/df6ca605-4eb7-45c2-8847-bf116faffa92.png" 
+                alt="BRI Logo" 
+                className="w-10 h-10 object-contain"
+              />
             </div>
             <div className="font-bold text-xl text-blue-900">
-              Bank Nasional Indonesia
+              BANK RAKYAT INDONESIA
             </div>
           </div>
 

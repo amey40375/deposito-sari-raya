@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Building2, Phone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -10,10 +10,14 @@ const Footer = () => {
           {/* Logo & Description */}
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-blue-900" />
+              <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center p-1">
+                <img 
+                  src="/lovable-uploads/df6ca605-4eb7-45c2-8847-bf116faffa92.png" 
+                  alt="BRI Logo" 
+                  className="w-8 h-8 object-contain"
+                />
               </div>
-              <div className="font-bold text-xl">Bank Nasional Indonesia</div>
+              <div className="font-bold text-xl">BANK RAKYAT INDONESIA</div>
             </div>
             <p className="text-blue-200">
               Bank terpercaya yang melayani Indonesia dengan komitmen memberikan solusi finansial terbaik untuk semua.
@@ -60,18 +64,18 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5" />
-                <span>info@banknasional.co.id</span>
+                <span>info@bri.co.id</span>
               </div>
               <div className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 mt-1" />
-                <span>Jl. Sudirman No. 1, Jakarta Pusat 10110</span>
+                <span>Jl. Jenderal Sudirman Kav. 44-46, Jakarta 10210</span>
               </div>
             </div>
           </div>
         </div>
 
         <div className="border-t border-blue-800 mt-8 pt-8 text-center text-blue-200">
-          <p>&copy; 2024 Bank Nasional Indonesia. Semua hak cipta dilindungi.</p>
+          <p>&copy; 2024 Bank Rakyat Indonesia. Semua hak cipta dilindungi.</p>
         </div>
       </div>
     </footer>
