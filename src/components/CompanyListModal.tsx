@@ -37,39 +37,39 @@ const CompanyListModal: React.FC<CompanyListModalProps> = ({ isOpen, onClose, on
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden">
+      <DialogContent className="max-w-lg max-h-[70vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-blue-900 mb-4">
+          <DialogTitle className="text-lg font-bold text-blue-900 mb-3">
             Daftar Perusahaan Terdaftar
           </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Search Bar */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
               type="text"
               placeholder="Cari nama perusahaan..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 py-3 text-lg"
+              className="pl-9 py-2 text-sm"
             />
           </div>
 
           {/* Company List */}
-          <div className="overflow-y-auto max-h-96">
+          <div className="overflow-y-auto max-h-80">
             <div className="space-y-2">
               {filteredCompanies.map((company, index) => (
                 <div
                   key={index}
                   onClick={() => handleCompanyClick(company)}
-                  className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all duration-200 banking-shadow"
+                  className="flex items-center space-x-2 p-3 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-all duration-200 banking-shadow"
                 >
-                  <Building2 className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                  <Building2 className="w-5 h-5 text-blue-600 flex-shrink-0" />
                   <div>
-                    <div className="font-semibold text-blue-900">{company}</div>
-                    <div className="text-sm text-gray-600">
+                    <div className="font-medium text-blue-900 text-sm">{company}</div>
+                    <div className="text-xs text-gray-600">
                       {index + 1 === 1 ? "1.859 karyawan terdaftar" : `${Math.floor(Math.random() * 500) + 100} karyawan terdaftar`}
                     </div>
                   </div>
@@ -79,9 +79,9 @@ const CompanyListModal: React.FC<CompanyListModalProps> = ({ isOpen, onClose, on
           </div>
 
           {filteredCompanies.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              <Building2 className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-              <p>Tidak ada perusahaan yang sesuai dengan pencarian Anda.</p>
+            <div className="text-center py-6 text-gray-500">
+              <Building2 className="w-10 h-10 mx-auto mb-3 text-gray-300" />
+              <p className="text-sm">Tidak ada perusahaan yang sesuai dengan pencarian Anda.</p>
             </div>
           )}
         </div>
