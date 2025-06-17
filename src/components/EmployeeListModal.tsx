@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -72,7 +73,6 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
     employee.cabang.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Sort employees
   const sortedEmployees = [...filteredEmployees].sort((a, b) => {
     const aValue = a[sortField];
     const bValue = b[sortField];
@@ -84,7 +84,6 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
     }
   });
 
-  // Paginate employees
   const totalPages = Math.ceil(sortedEmployees.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedEmployees = sortedEmployees.slice(startIndex, startIndex + itemsPerPage);
@@ -110,21 +109,21 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
+      <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-blue-900 mb-2">
+          <DialogTitle className="text-lg font-bold text-blue-900 mb-2">
             Daftar Karyawan - {companyName}
           </DialogTitle>
-          <div className="flex items-center space-x-2 text-gray-600">
-            <Users className="w-5 h-5" />
+          <div className="flex items-center space-x-2 text-gray-600 text-sm">
+            <Users className="w-4 h-4" />
             <span>Total: {filteredEmployees.length} karyawan</span>
           </div>
         </DialogHeader>
         
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Search Bar */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
               type="text"
               placeholder="Cari nama karyawan atau cabang..."
@@ -133,38 +132,38 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-10 py-3"
+              className="pl-9 py-2 text-sm"
             />
           </div>
 
           {/* Table */}
           <div className="overflow-y-auto max-h-96 border rounded-lg">
-            <table className="w-full">
+            <table className="w-full text-sm">
               <thead className="bg-blue-50 sticky top-0">
                 <tr>
                   <th 
-                    className="px-6 py-4 text-left font-semibold text-blue-900 cursor-pointer hover:bg-blue-100 transition-colors"
+                    className="px-4 py-3 text-left font-semibold text-blue-900 cursor-pointer hover:bg-blue-100 transition-colors text-sm"
                     onClick={() => handleSort('nama')}
                   >
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
                       <span>Nama</span>
                       {getSortIcon('nama')}
                     </div>
                   </th>
                   <th 
-                    className="px-6 py-4 text-left font-semibold text-blue-900 cursor-pointer hover:bg-blue-100 transition-colors"
+                    className="px-4 py-3 text-left font-semibold text-blue-900 cursor-pointer hover:bg-blue-100 transition-colors text-sm"
                     onClick={() => handleSort('cabang')}
                   >
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
                       <span>Cabang</span>
                       {getSortIcon('cabang')}
                     </div>
                   </th>
                   <th 
-                    className="px-6 py-4 text-left font-semibold text-blue-900 cursor-pointer hover:bg-blue-100 transition-colors"
+                    className="px-4 py-3 text-left font-semibold text-blue-900 cursor-pointer hover:bg-blue-100 transition-colors text-sm"
                     onClick={() => handleSort('tanggalPencairan')}
                   >
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
                       <span>Tanggal Pencairan</span>
                       {getSortIcon('tanggalPencairan')}
                     </div>
@@ -174,9 +173,9 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
               <tbody>
                 {paginatedEmployees.map((employee, index) => (
                   <tr key={index} className="border-b hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 font-medium">{employee.nama}</td>
-                    <td className="px-6 py-4 text-gray-700">{employee.cabang}</td>
-                    <td className="px-6 py-4 text-gray-700">{employee.tanggalPencairan}</td>
+                    <td className="px-4 py-2 font-medium text-sm">{employee.nama}</td>
+                    <td className="px-4 py-2 text-gray-700 text-sm">{employee.cabang}</td>
+                    <td className="px-4 py-2 text-gray-700 text-sm">{employee.tanggalPencairan}</td>
                   </tr>
                 ))}
               </tbody>
@@ -184,8 +183,8 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between">
-            <div className="text-sm text-gray-600">
+          <div className="flex items-center justify-between text-sm">
+            <div className="text-gray-600">
               Menampilkan {startIndex + 1} - {Math.min(startIndex + itemsPerPage, sortedEmployees.length)} dari {sortedEmployees.length} karyawan
             </div>
             
@@ -195,8 +194,9 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
                 size="sm"
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
+                className="text-xs"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-3 h-3" />
                 Sebelumnya
               </Button>
               
@@ -209,7 +209,7 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
                       variant={currentPage === page ? "default" : "outline"}
                       size="sm"
                       onClick={() => handlePageChange(page)}
-                      className="w-10"
+                      className="w-8 h-8 text-xs"
                     >
                       {page}
                     </Button>
@@ -217,12 +217,12 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
                 })}
                 {totalPages > 5 && (
                   <>
-                    <span className="text-gray-400">...</span>
+                    <span className="text-gray-400 text-xs">...</span>
                     <Button
                       variant={currentPage === totalPages ? "default" : "outline"}
                       size="sm"
                       onClick={() => handlePageChange(totalPages)}
-                      className="w-10"
+                      className="w-8 h-8 text-xs"
                     >
                       {totalPages}
                     </Button>
@@ -235,9 +235,10 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
                 size="sm"
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
+                className="text-xs"
               >
                 Selanjutnya
-                <ChevronRight className="w-4 h-4" />
+                <ChevronRight className="w-3 h-3" />
               </Button>
             </div>
           </div>
