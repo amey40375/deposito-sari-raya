@@ -1,9 +1,9 @@
-
 import React, { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Users, Calendar, CreditCard, User, Clock } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Search, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Users, Calendar, CreditCard, User, Clock, AlertTriangle } from 'lucide-react';
 
 interface Employee {
   nama: string;
@@ -34,6 +34,14 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
         </DialogHeader>
         
         <div className="space-y-6 p-2">
+          {/* Warning Alert with Blinking Animation */}
+          <Alert className="border-red-500 bg-red-50 animate-pulse">
+            <AlertTriangle className="h-5 w-5 text-red-600" />
+            <AlertDescription className="text-red-800 text-sm leading-relaxed">
+              <strong>PERINGATAN:</strong> Anda Belum Mengonfirmasi Jadwal Ini dan Untuk tetap Menetapkan Jadwal ini Silahkan Datang ke Kantor BRI Pusat Jawa Barat Apabila Anda Mengabaikan Tindakan Ini Maka Jadwal Tidak akan Tetap dan Masih Bisa Di Klaim Oleh Orang Lain, Selambat lambatnya Pada Hari Selasa, 23 Juni 2025 Mohon untuk Tidak Mengabaikan Tindakan ini
+            </AlertDescription>
+          </Alert>
+
           {/* Queue Number - Prominent Display */}
           <div className="text-center bg-blue-900 text-white p-4 rounded-lg shadow-lg">
             <p className="text-xl font-bold text-yellow-300 mb-1">NOMOR ANTRIAN</p>
