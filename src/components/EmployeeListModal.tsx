@@ -1,10 +1,9 @@
-
 import React, { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Search, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Users, Calendar, CreditCard, User, Clock, AlertTriangle } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Users, Calendar, CreditCard, User, Clock, AlertTriangle, Check } from 'lucide-react';
 
 interface Employee {
   nama: string;
@@ -25,6 +24,9 @@ interface EmployeeDetailModalProps {
 }
 
 const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClose, employeeName }) => {
+  // Check if this is one of the confirmed employees
+  const isConfirmedEmployee = employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah';
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200">
@@ -35,13 +37,22 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
         </DialogHeader>
         
         <div className="space-y-6 p-2">
-          {/* Warning Alert with Blinking Animation */}
-          <Alert className="border-red-500 bg-red-50 animate-pulse">
-            <AlertTriangle className="h-5 w-5 text-red-600" />
-            <AlertDescription className="text-red-800 text-sm leading-relaxed">
-              <strong>PERINGATAN:</strong> Anda Belum Mengonfirmasi Jadwal Ini dan Untuk tetap Menetapkan Jadwal ini Silahkan Datang ke Kantor BRI Pusat Jawa Barat Apabila Anda Mengabaikan Tindakan Ini Maka Jadwal Tidak akan Tetap dan Masih Bisa Di Klaim Oleh Orang Lain, Selambat lambatnya Pada Hari Selasa, 23 Juni 2025 Mohon untuk Tidak Mengabaikan Tindakan ini
-            </AlertDescription>
-          </Alert>
+          {/* Conditional Alert - Green for confirmed employees, Red for others */}
+          {isConfirmedEmployee ? (
+            <Alert className="border-green-500 bg-green-50">
+              <Check className="h-5 w-5 text-green-600" />
+              <AlertDescription className="text-green-800 text-sm leading-relaxed">
+                <strong>KONFIRMASI:</strong> Nomor Antrian Telah Dikonfirmasi dan Bermaterai
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <Alert className="border-red-500 bg-red-50 animate-pulse">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              <AlertDescription className="text-red-800 text-sm leading-relaxed">
+                <strong>PERINGATAN:</strong> Anda Belum Mengonfirmasi Jadwal Ini dan Untuk tetap Menetapkan Jadwal ini Silahkan Datang ke Kantor BRI Pusat Jawa Barat Apabila Anda Mengabaikan Tindakan Ini Maka Jadwal Tidak akan Tetap dan Masih Bisa Di Klaim Oleh Orang Lain, Selambat lambatnya Pada Hari Selasa, 23 Juni 2025 Mohon untuk Tidak Mengabaikan Tindakan ini
+              </AlertDescription>
+            </Alert>
+          )}
 
           {/* Queue Number - Prominent Display */}
           <div className="text-center bg-blue-900 text-white p-4 rounded-lg shadow-lg">
