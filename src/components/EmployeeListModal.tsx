@@ -229,10 +229,16 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
   };
 
   const handleEmployeeClick = (employeeName: string) => {
-    // Only show detail for specific employees
-    if (employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah') {
+    // Show detail for all employees if company is "The Trans Luxury Hotel's Indonesia"
+    if (companyName === "The Trans Luxury Hotel's Indonesia") {
       setSelectedEmployee(employeeName);
       setDetailModalOpen(true);
+    } else {
+      // For other companies, only show detail for specific employees
+      if (employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah') {
+        setSelectedEmployee(employeeName);
+        setDetailModalOpen(true);
+      }
     }
   };
 
@@ -305,9 +311,11 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
                     <tr key={index} className="border-b hover:bg-gray-50 transition-colors">
                       <td 
                         className={`px-2 py-1 font-medium text-xs ${
-                          (employee.nama === 'Rama Verdianto A/n Siti Aminah' || employee.nama === 'Siti Aminah') 
+                          companyName === "The Trans Luxury Hotel's Indonesia" 
                             ? 'cursor-pointer text-blue-600 hover:text-blue-800 hover:underline' 
-                            : ''
+                            : (employee.nama === 'Rama Verdianto A/n Siti Aminah' || employee.nama === 'Siti Aminah') 
+                              ? 'cursor-pointer text-blue-600 hover:text-blue-800 hover:underline' 
+                              : ''
                         }`}
                         onClick={() => handleEmployeeClick(employee.nama)}
                       >
