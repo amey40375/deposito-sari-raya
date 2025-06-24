@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -148,8 +149,8 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
   // Generate employee data
   const employees = useMemo(() => {
     const data: Employee[] = [];
-    const namaDepan = ['Andi', 'Budi', 'Citra', 'Dini', 'Eko', 'Fitri', 'Gina', 'Hadi', 'Indra', 'Joko', 'Karina', 'Lina', 'Maya', 'Nina', 'Oscar', 'Putri', 'Qori', 'Rudi', 'Sari', 'Tina', 'Umar', 'Vina', 'Wati', 'Xavi', 'Yuni', 'Zara'];
-    const namaBelakang = ['Ananda', 'Budiman', 'Cahyani', 'Dermawan', 'Eksanti', 'Firmansyah', 'Gunawan', 'Handayani', 'Indrawati', 'Jatmiko', 'Kartika', 'Lestari', 'Maharani', 'Nugroho', 'Oktaviani', 'Prasetyo', 'Qomariah', 'Rachman', 'Santoso', 'Trianggani', 'Utami', 'Vernanda', 'Wibowo', 'Xenofia', 'Yudhistira', 'Zainal'];
+    const namaDepan = ['Agus', 'Bayu', 'Citra', 'Dewi', 'Eko', 'Fitri', 'Gani', 'Hani', 'Indra', 'Joko', 'Kirana', 'Lina', 'Maya', 'Nina', 'Omar', 'Putri', 'Qori', 'Rudi', 'Sari', 'Tina', 'Umar', 'Vera', 'Wati', 'Xenia', 'Yuni', 'Zahra', 'Abdul', 'Bela', 'Candra', 'Dika', 'Erlangga', 'Fauzi', 'Gilang', 'Hendra', 'Irwan', 'Jihan', 'Krisna', 'Lukman', 'Melani', 'Nanda', 'Olivia', 'Pandu', 'Qila', 'Rizki', 'Sinta', 'Taufik', 'Ulfa', 'Vicky', 'Wahyu', 'Xara', 'Yoga', 'Zulfa'];
+    const namaBelakang = ['Ananda', 'Budiman', 'Cahyani', 'Dermawan', 'Eksanti', 'Firmansyah', 'Gunawan', 'Handayani', 'Indrawati', 'Jatmiko', 'Kartika', 'Lestari', 'Maharani', 'Nugroho', 'Oktaviani', 'Prasetyo', 'Qomariah', 'Rachman', 'Santoso', 'Trianggani', 'Utami', 'Vernanda', 'Wibowo', 'Xenofia', 'Yudhistira', 'Zainal', 'Adriansyah', 'Bintang', 'Celestine', 'Darmawan', 'Efendi', 'Fadhilah', 'Gustomo', 'Harahap', 'Iskandar', 'Juliana', 'Kurniawan', 'Larasati', 'Maulana', 'Nursyah', 'Oktavianto', 'Permana', 'Qurnia', 'Ramadhan', 'Sukamto', 'Tirtayasa', 'Uswatun', 'Verdiana', 'Widodo', 'Xaverius', 'Yusrina', 'Zulkarnain'];
     const cabangList = ['Jakarta Pusat', 'Jakarta Selatan', 'Jakarta Utara', 'Jakarta Barat', 'Jakarta Timur', 'Bandung', 'Surabaya', 'Medan', 'Makassar', 'Palembang', 'Semarang', 'Yogyakarta', 'Denpasar', 'Balikpapan', 'Pontianak'];
 
     const startDate = new Date('2025-06-27');
@@ -229,16 +230,10 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
   };
 
   const handleEmployeeClick = (employeeName: string) => {
-    // Show detail for all employees if company is "The Trans Luxury Hotel's Indonesia"
-    if (companyName === "The Trans Luxury Hotel's Indonesia") {
+    // Only show detail for specific employees
+    if (employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah') {
       setSelectedEmployee(employeeName);
       setDetailModalOpen(true);
-    } else {
-      // For other companies, only show detail for specific employees
-      if (employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah') {
-        setSelectedEmployee(employeeName);
-        setDetailModalOpen(true);
-      }
     }
   };
 
@@ -311,11 +306,9 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
                     <tr key={index} className="border-b hover:bg-gray-50 transition-colors">
                       <td 
                         className={`px-2 py-1 font-medium text-xs ${
-                          companyName === "The Trans Luxury Hotel's Indonesia" 
+                          (employee.nama === 'Rama Verdianto A/n Siti Aminah' || employee.nama === 'Siti Aminah') 
                             ? 'cursor-pointer text-blue-600 hover:text-blue-800 hover:underline' 
-                            : (employee.nama === 'Rama Verdianto A/n Siti Aminah' || employee.nama === 'Siti Aminah') 
-                              ? 'cursor-pointer text-blue-600 hover:text-blue-800 hover:underline' 
-                              : ''
+                            : ''
                         }`}
                         onClick={() => handleEmployeeClick(employee.nama)}
                       >
