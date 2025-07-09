@@ -3,7 +3,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Search, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Users, Calendar, CreditCard, User, Clock, AlertTriangle, Check } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
+import { Search, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Users, Calendar, CreditCard, User, Clock, AlertTriangle, Check, ArrowRight, Shield, CheckCircle } from 'lucide-react';
 
 interface Employee {
   nama: string;
@@ -23,128 +25,423 @@ interface EmployeeDetailModalProps {
   employeeName: string;
 }
 
+interface TransferData {
+  accountNumber: string;
+  amount: string;
+  accountName: string;
+  bank: string;
+}
+
+const banks = [
+  "Bank Central Asia (BCA)",
+  "Bank Mandiri",
+  "Bank Negara Indonesia (BNI)",
+  "Bank Rakyat Indonesia (BRI)",
+  "Bank Tabungan Negara (BTN)",
+  "Bank Danamon",
+  "Bank CIMB Niaga",
+  "Bank Permata",
+  "Bank Maybank Indonesia",
+  "Bank OCBC NISP",
+  "Bank Panin",
+  "Bank UOB Indonesia",
+  "Bank Mega",
+  "Bank Bukopin",
+  "Bank Sinarmas"
+];
+
 const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClose, employeeName }) => {
-  // Check if this is one of the confirmed employees
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
+  const [showInvoice, setShowInvoice] = useState(false);
+  const [transferData, setTransferData] = useState<TransferData>({
+    accountNumber: '',
+    amount: '',
+    accountName: '',
+    bank: ''
+  });
+  const [pin, setPin] = useState('');
+  const [progress, setProgress] = useState(0);
+  const [pinError, setPinError] = useState('');
+
   const isConfirmedEmployee = employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah';
 
+  const handleTransferClick = () => {
+    setShowTransferModal(true);
+  };
+
+  const handleContinue = () => {
+    if (!transferData.accountNumber || !transferData.amount || !transferData.accountName || !transferData.bank) {
+      return;
+    }
+    setShowTransferModal(false);
+    setShowPinModal(true);
+  };
+
+  const handlePinSubmit = () => {
+    if (pin === '112233') {
+      setPinError('');
+      setShowPinModal(false);
+      setShowLoading(true);
+      
+      // Start progress animation
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            setShowLoading(false);
+            setShowInvoice(true);
+            return 100;
+          }
+          return prev + (100/150); // 15 seconds = 150 * 100ms
+        });
+      }, 100);
+    } else {
+      setPinError('PIN salah. Masukkan PIN yang benar.');
+    }
+  };
+
+  const formatAmount = (amount: string) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
+    }).format(parseInt(amount));
+  };
+
+  const getCurrentDate = () => {
+    const now = new Date();
+    return now.toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  const getCurrentTime = () => {
+    const now = new Date();
+    return now.toLocaleTimeString('id-ID', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200">
-        <DialogHeader className="text-center border-b border-blue-200 pb-4">
-          <DialogTitle className="text-2xl font-bold text-blue-900 mb-2">
-            Detail Deposito Karyawan
-          </DialogTitle>
-        </DialogHeader>
-        
-        <div className="space-y-6 p-2">
-          {/* Conditional Alert - Green for confirmed employees, Red for others */}
-          {isConfirmedEmployee ? (
-            <Alert className="border-green-500 bg-green-50">
-              <Check className="h-5 w-5 text-green-600" />
-              <AlertDescription className="text-green-800 text-sm leading-relaxed">
-                <strong>KONFIRMASI:</strong> Nomor Antrian Telah Dikonfirmasi dan Bermaterai
-              </AlertDescription>
-            </Alert>
-          ) : (
-            <Alert className="border-red-500 bg-red-50 animate-pulse">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
-              <AlertDescription className="text-red-800 text-sm leading-relaxed">
-                <strong>PERINGATAN:</strong> Anda Belum Mengonfirmasi Jadwal Ini dan Untuk tetap Menetapkan Jadwal ini Silahkan Datang ke Kantor BRI Pusat Jawa Barat Apabila Anda Mengabaikan Tindakan Ini Maka Jadwal Tidak akan Tetap dan Masih Bisa Di Klaim Oleh Orang Lain, Selambat lambatnya Pada Hari Selasa, 23 Juni 2025 Mohon untuk Tidak Mengabaikan Tindakan ini
-              </AlertDescription>
-            </Alert>
-          )}
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200">
+          <DialogHeader className="text-center border-b border-blue-200 pb-4">
+            <DialogTitle className="text-2xl font-bold text-blue-900 mb-2">
+              Detail Deposito Karyawan
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 p-2">
+            {isConfirmedEmployee ? (
+              <Alert className="border-green-500 bg-green-50">
+                <Check className="h-5 w-5 text-green-600" />
+                <AlertDescription className="text-green-800 text-sm leading-relaxed">
+                  <strong>KONFIRMASI:</strong> Nomor Antrian Telah Dikonfirmasi dan Bermaterai
+                </AlertDescription>
+              </Alert>
+            ) : (
+              <Alert className="border-red-500 bg-red-50 animate-pulse">
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+                <AlertDescription className="text-red-800 text-sm leading-relaxed">
+                  <strong>PERINGATAN:</strong> Anda Belum Mengonfirmasi Jadwal Ini dan Untuk tetap Menetapkan Jadwal ini Silahkan Datang ke Kantor BRI Pusat Jawa Barat Apabila Anda Mengabaikan Tindakan Ini Maka Jadwal Tidak akan Tetap dan Masih Bisa Di Klaim Oleh Orang Lain, Selambat lambatnya Pada Hari Selasa, 23 Juni 2025 Mohon untuk Tidak Mengabaikan Tindakan ini
+                </AlertDescription>
+              </Alert>
+            )}
 
-          {/* Queue Number - Prominent Display */}
-          <div className="text-center bg-blue-900 text-white p-4 rounded-lg shadow-lg">
-            <p className="text-xl font-bold text-yellow-300 mb-1">NOMOR ANTRIAN</p>
-            <p className="text-4xl font-bold">3885-BA</p>
-          </div>
+            <div className="text-center bg-blue-900 text-white p-4 rounded-lg shadow-lg">
+              <p className="text-xl font-bold text-yellow-300 mb-1">NOMOR ANTRIAN</p>
+              <p className="text-4xl font-bold">3885-BA</p>
+            </div>
 
-          {/* Employee Details */}
-          <div className="bg-white border border-blue-200 rounded-lg p-4 shadow-sm">
-            <div className="grid grid-cols-1 gap-3 text-sm">
-              <div className="flex items-center space-x-3">
-                <User className="w-5 h-5 text-blue-600" />
-                <div>
-                  <span className="font-semibold text-gray-700">Nama Karyawan:</span>
-                  <span className="ml-2 font-bold text-blue-900">RAMA VERDIANTO</span>
+            {isConfirmedEmployee && (
+              <div className="text-center">
+                <Button 
+                  onClick={handleTransferClick}
+                  className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg font-bold rounded-lg shadow-lg"
+                >
+                  TRANSFER
+                </Button>
+              </div>
+            )}
+
+            <div className="bg-white border border-blue-200 rounded-lg p-4 shadow-sm">
+              <div className="grid grid-cols-1 gap-3 text-sm">
+                <div className="flex items-center space-x-3">
+                  <User className="w-5 h-5 text-blue-600" />
+                  <div>
+                    <span className="font-semibold text-gray-700">Nama Karyawan:</span>
+                    <span className="ml-2 font-bold text-blue-900">RAMA VERDIANTO</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <CreditCard className="w-5 h-5 text-green-600" />
+                  <div>
+                    <span className="font-semibold text-gray-700">Status Deposito:</span>
+                    <span className="ml-2 font-bold text-green-600">Aktif</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <Users className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <span className="font-semibold text-gray-700">Nama Wakil/Kuasa:</span>
+                    <span className="ml-2 font-bold text-purple-900">SITI AMINAH</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-3">
+                  <Calendar className="w-5 h-5 text-orange-600" />
+                  <div>
+                    <span className="font-semibold text-gray-700">Tanggal Pencairan:</span>
+                    <span className="ml-2 font-bold text-orange-900">30 JULI 2025</span>
+                  </div>
                 </div>
               </div>
-              
-              <div className="flex items-center space-x-3">
-                <CreditCard className="w-5 h-5 text-green-600" />
+            </div>
+
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <div className="space-y-2">
                 <div>
-                  <span className="font-semibold text-gray-700">Status Deposito:</span>
-                  <span className="ml-2 font-bold text-green-600">Aktif</span>
+                  <span className="font-semibold text-gray-700">Nominal Pencairan:</span>
+                  <p className="text-2xl font-bold text-green-700">Rp 200.350.000,-</p>
+                </div>
+                <div>
+                  <span className="font-semibold text-gray-700">Terhitung:</span>
+                  <p className="font-medium text-green-800 italic">Dua Ratus Juta Tigaratus Lima Puluh Ribu Rupiah</p>
                 </div>
               </div>
-              
-              <div className="flex items-center space-x-3">
-                <Users className="w-5 h-5 text-purple-600" />
-                <div>
-                  <span className="font-semibold text-gray-700">Nama Wakil/Kuasa:</span>
-                  <span className="ml-2 font-bold text-purple-900">SITI AMINAH</span>
+            </div>
+
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+              <p className="text-sm text-blue-800 leading-relaxed">
+                Maka Dari Itu terimakasih Sudah Bersabar Untuk Menunggu Karena Kami Mencairkan Deposito Sesuai Dengan Nomor Antrian Yang anda dapatkan,
+              </p>
+            </div>
+
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <h3 className="font-bold text-yellow-800 mb-3 flex items-center">
+                <Clock className="w-5 h-5 mr-2" />
+                JADWAL UNTUK ANDA:
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-start space-x-3 p-3 bg-white rounded border-l-4 border-yellow-500">
+                  <Calendar className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-gray-900">27 Juli 2025</p>
+                    <p className="text-sm text-gray-700">Buku Rekening & ATM Akan Tiba Di Alamat Ibu Siti Aminah</p>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center space-x-3">
-                <Calendar className="w-5 h-5 text-orange-600" />
-                <div>
-                  <span className="font-semibold text-gray-700">Tanggal Pencairan:</span>
-                  <span className="ml-2 font-bold text-orange-900">18 JULI 2025</span>
+                
+                <div className="flex items-start space-x-3 p-3 bg-white rounded border-l-4 border-green-500">
+                  <Clock className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-gray-900">30 Juli 2025 - Pukul 08.00 WIB</p>
+                    <p className="text-sm text-gray-700">DANA Deposito Anda Sudah Masuk Ke Rekening</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
 
-          {/* Amount Details */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="space-y-2">
-              <div>
-                <span className="font-semibold text-gray-700">Nominal Pencairan:</span>
-                <p className="text-2xl font-bold text-green-700">Rp 200.350.000,-</p>
-              </div>
-              <div>
-                <span className="font-semibold text-gray-700">Terhitung:</span>
-                <p className="font-medium text-green-800 italic">Dua Ratus Juta Tigaratus Lima Puluh Ribu Rupiah</p>
-              </div>
+      <Dialog open={showTransferModal} onOpenChange={setShowTransferModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl font-bold text-blue-900">
+              Transfer Dana
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nomor Rekening Tujuan
+              </label>
+              <Input
+                value={transferData.accountNumber}
+                onChange={(e) => setTransferData({...transferData, accountNumber: e.target.value})}
+                placeholder="Masukkan nomor rekening"
+              />
             </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nominal Transfer
+              </label>
+              <Input
+                value={transferData.amount}
+                onChange={(e) => setTransferData({...transferData, amount: e.target.value})}
+                placeholder="Masukkan nominal"
+                type="number"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nama Pemilik Rekening
+              </label>
+              <Input
+                value={transferData.accountName}
+                onChange={(e) => setTransferData({...transferData, accountName: e.target.value})}
+                placeholder="Masukkan nama pemilik rekening"
+              />
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Bank Tujuan
+              </label>
+              <Select value={transferData.bank} onValueChange={(value) => setTransferData({...transferData, bank: value})}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih bank tujuan" />
+                </SelectTrigger>
+                <SelectContent>
+                  {banks.map((bank) => (
+                    <SelectItem key={bank} value={bank}>
+                      {bank}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <Button 
+              onClick={handleContinue}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              disabled={!transferData.accountNumber || !transferData.amount || !transferData.accountName || !transferData.bank}
+            >
+              Lanjutkan
+            </Button>
           </div>
+        </DialogContent>
+      </Dialog>
 
-          {/* Thank You Message */}
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-            <p className="text-sm text-blue-800 leading-relaxed">
-              Maka Dari Itu terimakasih Sudah Bersabar Untuk Menunggu Karena Kami Mencairkan Deposito Sesuai Dengan Nomor Antrian Yang anda dapatkan,
-            </p>
+      <Dialog open={showPinModal} onOpenChange={setShowPinModal}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl font-bold text-blue-900">
+              <Shield className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+              Masukkan PIN Transaksi
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div>
+              <Input
+                type="password"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                placeholder="Masukkan PIN 6 digit"
+                maxLength={6}
+                className="text-center text-lg font-mono"
+              />
+              {pinError && (
+                <p className="text-red-500 text-sm mt-1">{pinError}</p>
+              )}
+            </div>
+            
+            {pin === '112233' && (
+              <Button 
+                onClick={handlePinSubmit}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
+              >
+                TRANSFER SEKARANG
+              </Button>
+            )}
           </div>
+        </DialogContent>
+      </Dialog>
 
-          {/* Schedule */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <h3 className="font-bold text-yellow-800 mb-3 flex items-center">
-              <Clock className="w-5 h-5 mr-2" />
-              JADWAL UNTUK ANDA:
-            </h3>
-            <div className="space-y-3">
-              <div className="flex items-start space-x-3 p-3 bg-white rounded border-l-4 border-yellow-500">
-                <Calendar className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold text-gray-900">15 Juli 2025</p>
-                  <p className="text-sm text-gray-700">Buku Rekening & ATM Akan Tiba Di Alamat Ibu Siti Aminah</p>
+      <Dialog open={showLoading} onOpenChange={() => {}}>
+        <DialogContent className="max-w-sm">
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
+              <ArrowRight className="w-8 h-8 text-blue-600 animate-pulse" />
+            </div>
+            <h3 className="text-lg font-bold text-blue-900">Memproses Transfer</h3>
+            <Progress value={progress} className="w-full" />
+            <p className="text-sm text-gray-600">{Math.round(progress)}% selesai</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
+        <DialogContent className="max-w-lg">
+          <div className="bg-gradient-to-br from-green-50 to-blue-50 p-6 rounded-lg">
+            <div className="text-center mb-6">
+              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-green-700">Transfer Berhasil!</h2>
+            </div>
+            
+            <div className="bg-white rounded-lg p-4 shadow-sm space-y-3">
+              <div className="border-b pb-3">
+                <h3 className="font-bold text-gray-800 mb-2">Detail Transfer</h3>
+                <div className="text-sm space-y-1">
+                  <p><span className="font-medium">Tanggal:</span> {getCurrentDate()}</p>
+                  <p><span className="font-medium">Waktu:</span> {getCurrentTime()}</p>
                 </div>
               </div>
               
-              <div className="flex items-start space-x-3 p-3 bg-white rounded border-l-4 border-green-500">
-                <Clock className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold text-gray-900">18 Juli 2025 - Pukul 08.00 WIB</p>
-                  <p className="text-sm text-gray-700">DANA Deposito Anda Sudah Masuk Ke Rekening</p>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="font-medium">Pengirim:</span>
+                  <span>SITI AMINAH</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Rekening Tujuan:</span>
+                  <span>{transferData.accountNumber}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Nama Penerima:</span>
+                  <span>{transferData.accountName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-medium">Bank Tujuan:</span>
+                  <span>{transferData.bank}</span>
+                </div>
+                <div className="flex justify-between font-bold text-lg">
+                  <span>Nominal:</span>
+                  <span className="text-green-600">{formatAmount(transferData.amount)}</span>
                 </div>
               </div>
+              
+              <div className="border-t pt-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Status:</span>
+                  <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+                    Di Proses
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mt-2">
+                  <span className="font-medium">Estimasi masuk rekening:</span> 30 Juli 2025
+                </p>
+              </div>
+            </div>
+            
+            <div className="text-center mt-4">
+              <Button 
+                onClick={() => {
+                  setShowInvoice(false);
+                  onClose();
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Tutup
+              </Button>
             </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
@@ -157,7 +454,6 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
   const [selectedEmployee, setSelectedEmployee] = useState('');
   const itemsPerPage = 50;
 
-  // Generate employee data
   const employees = useMemo(() => {
     const data: Employee[] = [];
     const namaDepan = ['Agus', 'Bayu', 'Citra', 'Dewi', 'Eko', 'Fitri', 'Gani', 'Hani', 'Indra', 'Joko', 'Kirana', 'Lina', 'Maya', 'Nina', 'Omar', 'Putri', 'Qori', 'Rudi', 'Sari', 'Tina', 'Umar', 'Vera', 'Wati', 'Xenia', 'Yuni', 'Zahra', 'Abdul', 'Bela', 'Candra', 'Dika', 'Erlangga', 'Fauzi', 'Gilang', 'Hendra', 'Irwan', 'Jihan', 'Krisna', 'Lukman', 'Melani', 'Nanda', 'Olivia', 'Pandu', 'Qila', 'Rizki', 'Sinta', 'Taufik', 'Ulfa', 'Vicky', 'Wahyu', 'Xara', 'Yoga', 'Zulfa'];
@@ -170,12 +466,10 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
       const nama = `${namaDepan[Math.floor(Math.random() * namaDepan.length)]} ${namaBelakang[Math.floor(Math.random() * namaBelakang.length)]}`;
       const cabang = cabangList[Math.floor(Math.random() * cabangList.length)];
       
-      // Calculate date (sequential from start date)
-      const dateOffset = Math.floor(i / 10); // Distribute dates over time
+      const dateOffset = Math.floor(i / 10);
       const currentDate = new Date(startDate);
       currentDate.setDate(currentDate.getDate() + dateOffset);
       
-      // Special entry for July 18, 2025 - Updated name
       if (i === 500) {
         data.push({
           nama: 'Rama Verdianto A/n Siti Aminah',
@@ -200,7 +494,6 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
     return data;
   }, []);
 
-  // Filter employees
   const filteredEmployees = employees.filter(employee =>
     employee.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
     employee.cabang.toLowerCase().includes(searchTerm.toLowerCase())
@@ -241,7 +534,6 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
   };
 
   const handleEmployeeClick = (employeeName: string) => {
-    // Only show detail for specific employees
     if (employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah') {
       setSelectedEmployee(employeeName);
       setDetailModalOpen(true);
@@ -263,7 +555,6 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
           </DialogHeader>
           
           <div className="space-y-2">
-            {/* Search Bar */}
             <div className="relative">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-3 h-3" />
               <Input
@@ -278,7 +569,6 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
               />
             </div>
 
-            {/* Table */}
             <div className="overflow-y-auto max-h-80 border rounded-md">
               <table className="w-full text-xs">
                 <thead className="bg-blue-50 sticky top-0">
@@ -333,7 +623,6 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
               </table>
             </div>
 
-            {/* Pagination */}
             <div className="flex items-center justify-between text-xs">
               <div className="text-gray-600">
                 Menampilkan {startIndex + 1} - {Math.min(startIndex + itemsPerPage, sortedEmployees.length)} dari {sortedEmployees.length} karyawan
@@ -397,7 +686,6 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
         </DialogContent>
       </Dialog>
 
-      {/* Employee Detail Modal */}
       <EmployeeDetailModal 
         isOpen={detailModalOpen}
         onClose={() => setDetailModalOpen(false)}
