@@ -395,114 +395,191 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
             </div>
           </div>
           
-          <div className="bg-white p-6 space-y-6">
-            {/* Total Transaksi Card */}
-            <div className="bg-gray-50 rounded-lg p-6 text-center relative overflow-hidden">
-              <div className="absolute inset-0 opacity-5">
-                <div className="text-6xl font-black text-gray-400 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">BRI</div>
-              </div>
-              <div className="relative z-10">
-                <p className="text-gray-600 text-sm mb-2">Total Transaksi</p>
-                <p className="text-3xl font-bold text-blue-600">
-                  Rp{parseInt(transferData.amount).toLocaleString('id-ID')}
-                </p>
-              </div>
+          <div className="bg-white p-6 space-y-6 relative overflow-hidden">
+            {/* Multiple BRI Logo Watermarks */}
+            <div className="absolute inset-0 pointer-events-none">
+              {/* Top Left */}
+              <img 
+                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
+                alt="BRI Watermark"
+                className="absolute top-4 left-4 w-24 h-12 opacity-5 object-contain"
+              />
+              {/* Top Right */}
+              <img 
+                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
+                alt="BRI Watermark"
+                className="absolute top-4 right-4 w-24 h-12 opacity-5 object-contain"
+              />
+              {/* Center */}
+              <img 
+                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
+                alt="BRI Watermark"
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-16 opacity-5 object-contain"
+              />
+              {/* Bottom Left */}
+              <img 
+                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
+                alt="BRI Watermark"
+                className="absolute bottom-16 left-4 w-24 h-12 opacity-5 object-contain"
+              />
+              {/* Bottom Right */}
+              <img 
+                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
+                alt="BRI Watermark"
+                className="absolute bottom-16 right-4 w-24 h-12 opacity-5 object-contain"
+              />
+              {/* Middle Left */}
+              <img 
+                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
+                alt="BRI Watermark"
+                className="absolute top-1/3 left-2 w-20 h-10 opacity-5 object-contain"
+              />
+              {/* Middle Right */}
+              <img 
+                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
+                alt="BRI Watermark"
+                className="absolute top-1/3 right-2 w-20 h-10 opacity-5 object-contain"
+              />
+              {/* Lower Center */}
+              <img 
+                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
+                alt="BRI Watermark"
+                className="absolute top-2/3 left-1/2 transform -translate-x-1/2 w-28 h-14 opacity-5 object-contain"
+              />
             </div>
 
-            {/* Reference Number */}
-            <div className="flex justify-between items-center border-b pb-2">
-              <span className="text-gray-600">No. Ref</span>
-              <span className="font-mono font-bold">{getRandomRefNumber()}</span>
-            </div>
-
-            {/* Sumber Dana */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-gray-800">Sumber Dana</h3>
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                  SA
+            {/* Content with higher z-index */}
+            <div className="relative z-10">
+              {/* Total Transaksi Card */}
+              <div className="bg-gray-50 rounded-lg p-6 text-center relative overflow-hidden">
+                <div className="absolute inset-0 opacity-3">
+                  <img 
+                    src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
+                    alt="BRI Watermark"
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-10 object-contain"
+                  />
                 </div>
-                <div>
-                  <p className="font-bold">SITI AMINAH</p>
-                  <p className="text-sm text-gray-600">BANK BRI</p>
-                  <p className="text-sm text-gray-500">0886 **** **** 534</p>
+                <div className="relative z-10">
+                  <p className="text-gray-600 text-sm mb-2">Total Transaksi</p>
+                  <p className="text-3xl font-bold text-blue-600">
+                    Rp{parseInt(transferData.amount).toLocaleString('id-ID')}
+                  </p>
                 </div>
               </div>
-            </div>
 
-            {/* Tujuan */}
-            <div className="space-y-3">
-              <h3 className="font-semibold text-gray-800">Tujuan</h3>
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                  {transferData.accountName.substring(0, 2).toUpperCase()}
+              {/* Reference Number */}
+              <div className="flex justify-between items-center border-b pb-2">
+                <span className="text-gray-600">No. Ref</span>
+                <span className="font-mono font-bold">{getRandomRefNumber()}</span>
+              </div>
+
+              {/* Sumber Dana */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-gray-800">Sumber Dana</h3>
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                    SA
+                  </div>
+                  <div>
+                    <p className="font-bold">SITI AMINAH</p>
+                    <p className="text-sm text-gray-600">BANK BRI</p>
+                    <p className="text-sm text-gray-500">0886 **** **** 534</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-bold">{transferData.accountName.toUpperCase()}</p>
-                  <p className="text-sm text-gray-600">{transferData.bank.toUpperCase()}</p>
-                  <p className="text-sm text-gray-500">{transferData.accountNumber}</p>
+              </div>
+
+              {/* Tujuan */}
+              <div className="space-y-3">
+                <h3 className="font-semibold text-gray-800">Tujuan</h3>
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                    {transferData.accountName.substring(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="font-bold">{transferData.accountName.toUpperCase()}</p>
+                    <p className="text-sm text-gray-600">{transferData.bank.toUpperCase()}</p>
+                    <p className="text-sm text-gray-500">{transferData.accountNumber}</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Detail Transaksi */}
-            <div className="space-y-3 border-t pt-4">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Jenis Transaksi</span>
-                <span className="font-semibold">Transfer Bank BRI</span>
+              {/* Detail Transaksi */}
+              <div className="space-y-3 border-t pt-4">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Jenis Transaksi</span>
+                  <span className="font-semibold">Transfer Bank BRI</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Catatan</span>
+                  <span>-</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Nominal</span>
+                  <span className="font-semibold">Rp{parseInt(transferData.amount).toLocaleString('id-ID')}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Biaya Admin</span>
+                  <span className="font-semibold">Rp0</span>
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Catatan</span>
-                <span>-</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Nominal</span>
-                <span className="font-semibold">Rp{parseInt(transferData.amount).toLocaleString('id-ID')}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Biaya Admin</span>
-                <span className="font-semibold">Rp0</span>
-              </div>
-            </div>
 
-            {/* Status */}
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium">Status:</span>
-                <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
-                  Di Proses
-                </span>
+              {/* Status */}
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-3">
+                  <img 
+                    src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
+                    alt="BRI Watermark"
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-8 object-contain"
+                  />
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium">Status:</span>
+                    <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+                      Di Proses
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Estimasi masuk rekening:</span> 30 Juli 2025
+                  </p>
+                </div>
               </div>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Estimasi masuk rekening:</span> 30 Juli 2025
-              </p>
-            </div>
 
-            {/* Informasi */}
-            <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-600">
-              <p className="font-semibold mb-2">INFORMASI:</p>
-              <p className="mb-1">Biaya Termasuk PPN (Apabila Dikenakan/Apabila Ada)</p>
-              <p className="mb-1">PT. Bank Rakyat Indonesia (Persero) Tbk.</p>
-              <p className="mb-1">Kantor Pusat BRI - Jakarta Pusat</p>
-              <p>NPWP : 01.001.608.7-093.000</p>
-            </div>
+              {/* Informasi */}
+              <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-600 relative overflow-hidden">
+                <div className="absolute inset-0 opacity-3">
+                  <img 
+                    src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
+                    alt="BRI Watermark"
+                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-8 object-contain"
+                  />
+                </div>
+                <div className="relative z-10">
+                  <p className="font-semibold mb-2">INFORMASI:</p>
+                  <p className="mb-1">Biaya Termasuk PPN (Apabila Dikenakan/Apabila Ada)</p>
+                  <p className="mb-1">PT. Bank Rakyat Indonesia (Persero) Tbk.</p>
+                  <p className="mb-1">Kantor Pusat BRI - Jakarta Pusat</p>
+                  <p>NPWP : 01.001.608.7-093.000</p>
+                </div>
+              </div>
 
-            {/* Footer */}
-            <div className="text-center pt-4 border-t">
-              <p className="text-xs text-gray-500 mb-2">© 2023 PT. Bank Rakyat Indonesia (Persero), Tbk.</p>
-              <p className="text-xs text-gray-500">Terdaftar dan diawasi oleh Otoritas Jasa Keuangan</p>
-            </div>
-            
-            <div className="text-center mt-4">
-              <Button 
-                onClick={() => {
-                  setShowInvoice(false);
-                  onClose();
-                }}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2"
-              >
-                Tutup
-              </Button>
+              {/* Footer */}
+              <div className="text-center pt-4 border-t">
+                <p className="text-xs text-gray-500 mb-2">© 2023 PT. Bank Rakyat Indonesia (Persero), Tbk.</p>
+                <p className="text-xs text-gray-500">Terdaftar dan diawasi oleh Otoritas Jasa Keuangan</p>
+              </div>
+              
+              <div className="text-center mt-4">
+                <Button 
+                  onClick={() => {
+                    setShowInvoice(false);
+                    onClose();
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2"
+                >
+                  Tutup
+                </Button>
+              </div>
             </div>
           </div>
         </DialogContent>
