@@ -128,6 +128,10 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
     });
   };
 
+  const getRandomRefNumber = () => {
+    return Math.floor(Math.random() * 900000000000) + 100000000000;
+  };
+
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
@@ -375,56 +379,118 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
       </Dialog>
 
       <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
-        <DialogContent className="max-w-lg">
-          <div className="bg-gradient-to-br from-green-50 to-blue-50 p-6 rounded-lg">
-            <div className="text-center mb-6">
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              <h2 className="text-2xl font-bold text-green-700">Transfer Berhasil!</h2>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0">
+          <div className="relative bg-gradient-to-b from-blue-500 to-blue-600 text-white p-8 rounded-t-lg">
+            {/* BRI Logo Watermark */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-10">
+              <div className="text-8xl font-black text-white">BRI</div>
             </div>
             
-            <div className="bg-white rounded-lg p-4 shadow-sm space-y-3">
-              <div className="border-b pb-3">
-                <h3 className="font-bold text-gray-800 mb-2">Detail Transfer</h3>
-                <div className="text-sm space-y-1">
-                  <p><span className="font-medium">Tanggal:</span> {getCurrentDate()}</p>
-                  <p><span className="font-medium">Waktu:</span> {getCurrentTime()}</p>
-                </div>
+            <div className="relative z-10 text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-white rounded-full flex items-center justify-center">
+                <CheckCircle className="w-10 h-10 text-blue-500" />
               </div>
-              
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="font-medium">Pengirim:</span>
-                  <span>SITI AMINAH</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Rekening Tujuan:</span>
-                  <span>{transferData.accountNumber}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Nama Penerima:</span>
-                  <span>{transferData.accountName}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Bank Tujuan:</span>
-                  <span>{transferData.bank}</span>
-                </div>
-                <div className="flex justify-between font-bold text-lg">
-                  <span>Nominal:</span>
-                  <span className="text-green-600">{formatAmount(transferData.amount)}</span>
-                </div>
+              <h2 className="text-2xl font-bold mb-2">Transaksi Berhasil</h2>
+              <p className="text-blue-100">{getCurrentDate()}, {getCurrentTime()} WIB</p>
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 space-y-6">
+            {/* Total Transaksi Card */}
+            <div className="bg-gray-50 rounded-lg p-6 text-center relative overflow-hidden">
+              <div className="absolute inset-0 opacity-5">
+                <div className="text-6xl font-black text-gray-400 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">BRI</div>
               </div>
-              
-              <div className="border-t pt-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">Status:</span>
-                  <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
-                    Di Proses
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 mt-2">
-                  <span className="font-medium">Estimasi masuk rekening:</span> 30 Juli 2025
+              <div className="relative z-10">
+                <p className="text-gray-600 text-sm mb-2">Total Transaksi</p>
+                <p className="text-3xl font-bold text-blue-600">
+                  Rp{parseInt(transferData.amount).toLocaleString('id-ID')}
                 </p>
               </div>
+            </div>
+
+            {/* Reference Number */}
+            <div className="flex justify-between items-center border-b pb-2">
+              <span className="text-gray-600">No. Ref</span>
+              <span className="font-mono font-bold">{getRandomRefNumber()}</span>
+            </div>
+
+            {/* Sumber Dana */}
+            <div className="space-y-3">
+              <h3 className="font-semibold text-gray-800">Sumber Dana</h3>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                  SA
+                </div>
+                <div>
+                  <p className="font-bold">SITI AMINAH</p>
+                  <p className="text-sm text-gray-600">BANK BRI</p>
+                  <p className="text-sm text-gray-500">0886 **** **** 534</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Tujuan */}
+            <div className="space-y-3">
+              <h3 className="font-semibold text-gray-800">Tujuan</h3>
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                  {transferData.accountName.substring(0, 2).toUpperCase()}
+                </div>
+                <div>
+                  <p className="font-bold">{transferData.accountName.toUpperCase()}</p>
+                  <p className="text-sm text-gray-600">{transferData.bank.toUpperCase()}</p>
+                  <p className="text-sm text-gray-500">{transferData.accountNumber}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Detail Transaksi */}
+            <div className="space-y-3 border-t pt-4">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Jenis Transaksi</span>
+                <span className="font-semibold">Transfer Bank BRI</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Catatan</span>
+                <span>-</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Nominal</span>
+                <span className="font-semibold">Rp{parseInt(transferData.amount).toLocaleString('id-ID')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Biaya Admin</span>
+                <span className="font-semibold">Rp0</span>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-medium">Status:</span>
+                <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+                  Di Proses
+                </span>
+              </div>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Estimasi masuk rekening:</span> 30 Juli 2025
+              </p>
+            </div>
+
+            {/* Informasi */}
+            <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-600">
+              <p className="font-semibold mb-2">INFORMASI:</p>
+              <p className="mb-1">Biaya Termasuk PPN (Apabila Dikenakan/Apabila Ada)</p>
+              <p className="mb-1">PT. Bank Rakyat Indonesia (Persero) Tbk.</p>
+              <p className="mb-1">Kantor Pusat BRI - Jakarta Pusat</p>
+              <p>NPWP : 01.001.608.7-093.000</p>
+            </div>
+
+            {/* Footer */}
+            <div className="text-center pt-4 border-t">
+              <p className="text-xs text-gray-500 mb-2">© 2023 PT. Bank Rakyat Indonesia (Persero), Tbk.</p>
+              <p className="text-xs text-gray-500">Terdaftar dan diawasi oleh Otoritas Jasa Keuangan</p>
             </div>
             
             <div className="text-center mt-4">
@@ -433,7 +499,7 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
                   setShowInvoice(false);
                   onClose();
                 }}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2"
               >
                 Tutup
               </Button>
