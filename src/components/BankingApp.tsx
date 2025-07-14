@@ -52,6 +52,8 @@ const banks = [
 ];
 
 const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
+  console.log('BankingApp rendered with isOpen:', isOpen);
+  
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
@@ -70,6 +72,7 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
   const savingsBalance = 0;
 
   const handleTransferClick = () => {
+    console.log('Transfer clicked');
     setShowTransferModal(true);
   };
 
@@ -82,6 +85,7 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
   };
 
   const handlePinSubmit = () => {
+    console.log('PIN submitted:', pin);
     if (pin === '112233') {
       setShowPinModal(false);
       setShowLoading(true);
@@ -121,7 +125,7 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
     onClose();
   };
 
-  if (!isOpen) return null;
+  console.log('BankingApp about to render, isOpen:', isOpen);
 
   return (
     <>

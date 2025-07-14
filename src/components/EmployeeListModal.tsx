@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -59,19 +58,24 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
   const [pin, setPin] = useState('');
   const { toast } = useToast();
 
+  console.log('EmployeeDetailModal state:', { showPinModal, showBankingApp, employeeName });
+
   const isConfirmedEmployee = employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah';
 
   const handleEmployeeClick = () => {
+    console.log('Employee clicked:', employeeName, 'isConfirmed:', isConfirmedEmployee);
     if (isConfirmedEmployee) {
       setShowPinModal(true);
     }
   };
 
   const handlePinSubmit = () => {
+    console.log('PIN submit clicked, PIN:', pin);
     if (pin === '112233') {
       setShowPinModal(false);
       onClose(); // Close the detail modal first
       setTimeout(() => {
+        console.log('Setting showBankingApp to true');
         setShowBankingApp(true); // Then show banking app
       }, 300);
     } else {
@@ -84,6 +88,7 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
   };
 
   const handleCloseBankingApp = () => {
+    console.log('Closing banking app');
     setShowBankingApp(false);
     setPin('');
   };
@@ -242,6 +247,7 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
       </Dialog>
 
       {/* Banking App */}
+      {console.log('About to render BankingApp with showBankingApp:', showBankingApp)}
       <BankingApp 
         isOpen={showBankingApp}
         onClose={handleCloseBankingApp}
@@ -339,6 +345,7 @@ const EmployeeListModal: React.FC<EmployeeListModalProps> = ({ isOpen, onClose, 
   };
 
   const handleEmployeeClick = (employeeName: string) => {
+    console.log('Employee clicked in list:', employeeName);
     if (employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah') {
       setSelectedEmployee(employeeName);
       setDetailModalOpen(true);
