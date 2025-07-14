@@ -7,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { Search, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Users, Calendar, CreditCard, User, Clock, AlertTriangle, Check, ArrowRight, Shield, CheckCircle } from 'lucide-react';
-import BankingApp from './BankingApp';
 
 interface Employee {
   nama: string;
@@ -28,220 +27,130 @@ interface EmployeeDetailModalProps {
 }
 
 const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClose, employeeName }) => {
-  const [showPinModal, setShowPinModal] = useState(false);
-  const [showBankingApp, setShowBankingApp] = useState(false);
-  const [pin, setPin] = useState('');
-  const { toast } = useToast();
-
-  console.log('EmployeeDetailModal state:', { showPinModal, showBankingApp, employeeName, isOpen });
-
   const isConfirmedEmployee = employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah';
 
   const handleEmployeeClick = () => {
-    console.log('Employee clicked:', employeeName, 'isConfirmed:', isConfirmedEmployee);
-    if (isConfirmedEmployee) {
-      console.log('Opening PIN modal');
-      setShowPinModal(true);
-    }
+    console.log('Employee clicked:', employeeName);
   };
-
-  const handlePinSubmit = () => {
-    console.log('PIN submit clicked, PIN:', pin);
-    if (pin === '112233') {
-      console.log('Correct PIN, transitioning to banking app');
-      setShowPinModal(false);
-      setPin('');
-      
-      // Close detail modal first
-      onClose();
-      
-      // Small delay then open banking app
-      setTimeout(() => {
-        console.log('Opening banking app');
-        setShowBankingApp(true);
-      }, 100);
-    } else {
-      toast({
-        title: "PIN Salah",
-        description: "Masukkan PIN yang benar",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleCloseBankingApp = () => {
-    console.log('Closing banking app');
-    setShowBankingApp(false);
-    setPin('');
-  };
-
-  // Reset states when modal closes
-  React.useEffect(() => {
-    if (!isOpen) {
-      setShowPinModal(false);
-      setPin('');
-    }
-  }, [isOpen]);
 
   return (
-    <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200">
-          <DialogHeader className="text-center border-b border-blue-200 pb-4">
-            <DialogTitle className="text-2xl font-bold text-blue-900 mb-2">
-              Detail Deposito Karyawan
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-6 p-2">
-            {isConfirmedEmployee ? (
-              <Alert className="border-green-500 bg-green-50">
-                <Check className="h-5 w-5 text-green-600" />
-                <AlertDescription className="text-green-800 text-sm leading-relaxed">
-                  <strong>KONFIRMASI:</strong> Nomor Antrian Telah Dikonfirmasi dan Bermaterai
-                </AlertDescription>
-              </Alert>
-            ) : (
-              <Alert className="border-red-500 bg-red-50 animate-pulse">
-                <AlertTriangle className="h-5 w-5 text-red-600" />
-                <AlertDescription className="text-red-800 text-sm leading-relaxed">
-                  <strong>PERINGATAN:</strong> Anda Belum Mengonfirmasi Jadwal Ini dan Untuk tetap Menetapkan Jadwal ini Silahkan Datang ke Kantor BRI Pusat Jawa Barat Apabila Anda Mengabaikan Tindakan Ini Maka Jadwal Tidak akan Tetap dan Masih Bisa Di Klaim Oleh Orang Lain, Selambat lambatnya Pada Hari Selasa, 23 Juni 2025 Mohon untuk Tidak Mengabaikan Tindakan ini
-                </AlertDescription>
-              </Alert>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200">
+        <DialogHeader className="text-center border-b border-blue-200 pb-4">
+          <DialogTitle className="text-2xl font-bold text-blue-900 mb-2">
+            Detail Deposito Karyawan
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="space-y-6 p-2">
+          {isConfirmedEmployee ? (
+            <Alert className="border-green-500 bg-green-50">
+              <Check className="h-5 w-5 text-green-600" />
+              <AlertDescription className="text-green-800 text-sm leading-relaxed">
+                <strong>KONFIRMASI:</strong> Nomor Antrian Telah Dikonfirmasi dan Bermaterai
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <Alert className="border-red-500 bg-red-50 animate-pulse">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              <AlertDescription className="text-red-800 text-sm leading-relaxed">
+                <strong>PERINGATAN:</strong> Anda Belum Mengonfirmasi Jadwal Ini dan Untuk tetap Menetapkan Jadwal ini Silahkan Datang ke Kantor BRI Pusat Jawa Barat Apabila Anda Mengabaikan Tindakan Ini Maka Jadwal Tidak akan Tetap dan Masih Bisa Di Klaim Oleh Orang Lain, Selambat lambatnya Pada Hari Selasa, 23 Juni 2025 Mohon untuk Tidak Mengabaikan Tindakan ini
+              </AlertDescription>
+            </Alert>
+          )}
+
+          <div 
+            className="text-center bg-blue-900 text-white p-4 rounded-lg shadow-lg cursor-pointer hover:bg-blue-800 transition-colors" 
+            onClick={handleEmployeeClick}
+          >
+            <p className="text-xl font-bold text-yellow-300 mb-1">NOMOR ANTRIAN</p>
+            <p className="text-4xl font-bold">3885-BA</p>
+            {isConfirmedEmployee && (
+              <p className="text-sm text-blue-200 mt-2">Klik untuk melanjutkan</p>
             )}
+          </div>
 
-            <div 
-              className="text-center bg-blue-900 text-white p-4 rounded-lg shadow-lg cursor-pointer hover:bg-blue-800 transition-colors" 
-              onClick={handleEmployeeClick}
-            >
-              <p className="text-xl font-bold text-yellow-300 mb-1">NOMOR ANTRIAN</p>
-              <p className="text-4xl font-bold">3885-BA</p>
-              {isConfirmedEmployee && (
-                <p className="text-sm text-blue-200 mt-2">Klik untuk melanjutkan</p>
-              )}
-            </div>
-
-            <div className="bg-white border border-blue-200 rounded-lg p-4 shadow-sm">
-              <div className="grid grid-cols-1 gap-3 text-sm">
-                <div className="flex items-center space-x-3">
-                  <User className="w-5 h-5 text-blue-600" />
-                  <div>
-                    <span className="font-semibold text-gray-700">Nama Karyawan:</span>
-                    <span className="ml-2 font-bold text-blue-900">RAMA VERDIANTO</span>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <CreditCard className="w-5 h-5 text-green-600" />
-                  <div>
-                    <span className="font-semibold text-gray-700">Status Deposito:</span>
-                    <span className="ml-2 font-bold text-green-600">Aktif</span>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <Users className="w-5 h-5 text-purple-600" />
-                  <div>
-                    <span className="font-semibold text-gray-700">Nama Wakil/Kuasa:</span>
-                    <span className="ml-2 font-bold text-purple-900">SITI AMINAH</span>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <Calendar className="w-5 h-5 text-orange-600" />
-                  <div>
-                    <span className="font-semibold text-gray-700">Tanggal Pencairan:</span>
-                    <span className="ml-2 font-bold text-orange-900">30 JULI 2025</span>
-                  </div>
+          <div className="bg-white border border-blue-200 rounded-lg p-4 shadow-sm">
+            <div className="grid grid-cols-1 gap-3 text-sm">
+              <div className="flex items-center space-x-3">
+                <User className="w-5 h-5 text-blue-600" />
+                <div>
+                  <span className="font-semibold text-gray-700">Nama Karyawan:</span>
+                  <span className="ml-2 font-bold text-blue-900">RAMA VERDIANTO</span>
                 </div>
               </div>
-            </div>
-
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <div className="space-y-2">
+              
+              <div className="flex items-center space-x-3">
+                <CreditCard className="w-5 h-5 text-green-600" />
                 <div>
-                  <span className="font-semibold text-gray-700">Nominal Pencairan:</span>
-                  <p className="text-2xl font-bold text-green-700">Rp 200.350.000,-</p>
-                </div>
-                <div>
-                  <span className="font-semibold text-gray-700">Terhitung:</span>
-                  <p className="font-medium text-green-800 italic">Dua Ratus Juta Tigaratus Lima Puluh Ribu Rupiah</p>
+                  <span className="font-semibold text-gray-700">Status Deposito:</span>
+                  <span className="ml-2 font-bold text-green-600">Aktif</span>
                 </div>
               </div>
-            </div>
-
-            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-              <p className="text-sm text-blue-800 leading-relaxed">
-                Maka Dari Itu terimakasih Sudah Bersabar Untuk Menunggu Karena Kami Mencairkan Deposito Sesuai Dengan Nomor Antrian Yang anda dapatkan,
-              </p>
-            </div>
-
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <h3 className="font-bold text-yellow-800 mb-3 flex items-center">
-                <Clock className="w-5 h-5 mr-2" />
-                JADWAL UNTUK ANDA:
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-start space-x-3 p-3 bg-white rounded border-l-4 border-yellow-500">
-                  <Calendar className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-gray-900">27 Juli 2025</p>
-                    <p className="text-sm text-gray-700">Buku Rekening & ATM Akan Tiba Di Alamat Ibu Siti Aminah</p>
-                  </div>
+              
+              <div className="flex items-center space-x-3">
+                <Users className="w-5 h-5 text-purple-600" />
+                <div>
+                  <span className="font-semibold text-gray-700">Nama Wakil/Kuasa:</span>
+                  <span className="ml-2 font-bold text-purple-900">SITI AMINAH</span>
                 </div>
-                
-                <div className="flex items-start space-x-3 p-3 bg-white rounded border-l-4 border-green-500">
-                  <Clock className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-gray-900">30 Juli 2025 - Pukul 08.00 WIB</p>
-                    <p className="text-sm text-gray-700">DANA Deposito Anda Sudah Masuk Ke Rekening</p>
-                  </div>
+              </div>
+              
+              <div className="flex items-center space-x-3">
+                <Calendar className="w-5 h-5 text-orange-600" />
+                <div>
+                  <span className="font-semibold text-gray-700">Tanggal Pencairan:</span>
+                  <span className="ml-2 font-bold text-orange-900">30 JULI 2025</span>
                 </div>
               </div>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* PIN Modal */}
-      <Dialog open={showPinModal} onOpenChange={setShowPinModal}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl font-bold text-blue-900">
-              <Shield className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-              Masukkan PIN
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div>
-              <Input
-                type="password"
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
-                placeholder="Masukkan PIN 6 digit"
-                maxLength={6}
-                className="text-center text-lg font-mono"
-              />
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="space-y-2">
+              <div>
+                <span className="font-semibold text-gray-700">Nominal Pencairan:</span>
+                <p className="text-2xl font-bold text-green-700">Rp 200.350.000,-</p>
+              </div>
+              <div>
+                <span className="font-semibold text-gray-700">Terhitung:</span>
+                <p className="font-medium text-green-800 italic">Dua Ratus Juta Tigaratus Lima Puluh Ribu Rupiah</p>
+              </div>
             </div>
-            
-            <Button 
-              onClick={handlePinSubmit}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
-              disabled={pin.length !== 6}
-            >
-              MASUK APLIKASI
-            </Button>
           </div>
-        </DialogContent>
-      </Dialog>
 
-      {/* Banking App */}
-      <BankingApp 
-        isOpen={showBankingApp}
-        onClose={handleCloseBankingApp}
-      />
-    </>
+          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+            <p className="text-sm text-blue-800 leading-relaxed">
+              Maka Dari Itu terimakasih Sudah Bersabar Untuk Menunggu Karena Kami Mencairkan Deposito Sesuai Dengan Nomor Antrian Yang anda dapatkan,
+            </p>
+          </div>
+
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <h3 className="font-bold text-yellow-800 mb-3 flex items-center">
+              <Clock className="w-5 h-5 mr-2" />
+              JADWAL UNTUK ANDA:
+            </h3>
+            <div className="space-y-3">
+              <div className="flex items-start space-x-3 p-3 bg-white rounded border-l-4 border-yellow-500">
+                <Calendar className="w-4 h-4 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold text-gray-900">27 Juli 2025</p>
+                  <p className="text-sm text-gray-700">Buku Rekening & ATM Akan Tiba Di Alamat Ibu Siti Aminah</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-3 p-3 bg-white rounded border-l-4 border-green-500">
+                <Clock className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="font-semibold text-gray-900">30 Juli 2025 - Pukul 08.00 WIB</p>
+                  <p className="text-sm text-gray-700">DANA Deposito Anda Sudah Masuk Ke Rekening</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
