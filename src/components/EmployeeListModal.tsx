@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/hooks/use-toast';
 import { Search, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, Users, Calendar, CreditCard, User, Clock, AlertTriangle, Check, ArrowRight, Shield, CheckCircle } from 'lucide-react';
+import BankingApp from './BankingApp';
 
 interface Employee {
   nama: string;
@@ -51,85 +53,36 @@ const banks = [
 ];
 
 const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClose, employeeName }) => {
-  const [showTransferModal, setShowTransferModal] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
-  const [showLoading, setShowLoading] = useState(false);
-  const [showInvoice, setShowInvoice] = useState(false);
-  const [transferData, setTransferData] = useState<TransferData>({
-    accountNumber: '',
-    amount: '',
-    accountName: '',
-    bank: ''
-  });
+  const [showBankingApp, setShowBankingApp] = useState(false);
   const [pin, setPin] = useState('');
-  const [progress, setProgress] = useState(0);
-  const [pinError, setPinError] = useState('');
+  const { toast } = useToast();
 
   const isConfirmedEmployee = employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah';
 
-  const handleTransferClick = () => {
-    setShowTransferModal(true);
-  };
-
-  const handleContinue = () => {
-    if (!transferData.accountNumber || !transferData.amount || !transferData.accountName || !transferData.bank) {
-      return;
+  const handleEmployeeClick = () => {
+    if (isConfirmedEmployee) {
+      setShowPinModal(true);
     }
-    setShowTransferModal(false);
-    setShowPinModal(true);
   };
 
   const handlePinSubmit = () => {
     if (pin === '112233') {
-      setPinError('');
       setShowPinModal(false);
-      setShowLoading(true);
-      
-      // Start progress animation
-      const interval = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setShowLoading(false);
-            setShowInvoice(true);
-            return 100;
-          }
-          return prev + (100/150); // 15 seconds = 150 * 100ms
-        });
-      }, 100);
+      onClose();
+      setShowBankingApp(true);
     } else {
-      setPinError('PIN salah. Masukkan PIN yang benar.');
+      toast({
+        title: "PIN Salah",
+        description: "Masukkan PIN yang benar",
+        variant: "destructive"
+      });
     }
   };
 
-  const formatAmount = (amount: string) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0
-    }).format(parseInt(amount));
-  };
-
-  const getCurrentDate = () => {
-    const now = new Date();
-    return now.toLocaleDateString('id-ID', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
-    });
-  };
-
-  const getCurrentTime = () => {
-    const now = new Date();
-    return now.toLocaleTimeString('id-ID', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  };
-
-  const getRandomRefNumber = () => {
-    return Math.floor(Math.random() * 900000000000) + 100000000000;
+  const handleCloseBankingApp = () => {
+    setShowBankingApp(false);
+    setPin('');
   };
 
   return (
@@ -159,21 +112,13 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
               </Alert>
             )}
 
-            <div className="text-center bg-blue-900 text-white p-4 rounded-lg shadow-lg">
+            <div className="text-center bg-blue-900 text-white p-4 rounded-lg shadow-lg cursor-pointer" onClick={handleEmployeeClick}>
               <p className="text-xl font-bold text-yellow-300 mb-1">NOMOR ANTRIAN</p>
               <p className="text-4xl font-bold">3885-BA</p>
+              {isConfirmedEmployee && (
+                <p className="text-sm text-blue-200 mt-2">Klik untuk melanjutkan</p>
+              )}
             </div>
-
-            {isConfirmedEmployee && (
-              <div className="text-center">
-                <Button 
-                  onClick={handleTransferClick}
-                  className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg font-bold rounded-lg shadow-lg"
-                >
-                  TRANSFER
-                </Button>
-              </div>
-            )}
 
             <div className="bg-white border border-blue-200 rounded-lg p-4 shadow-sm">
               <div className="grid grid-cols-1 gap-3 text-sm">
@@ -257,84 +202,13 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showTransferModal} onOpenChange={setShowTransferModal}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl font-bold text-blue-900">
-              Transfer Dana
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nomor Rekening Tujuan
-              </label>
-              <Input
-                value={transferData.accountNumber}
-                onChange={(e) => setTransferData({...transferData, accountNumber: e.target.value})}
-                placeholder="Masukkan nomor rekening"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nominal Transfer
-              </label>
-              <Input
-                value={transferData.amount}
-                onChange={(e) => setTransferData({...transferData, amount: e.target.value})}
-                placeholder="Masukkan nominal"
-                type="number"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nama Pemilik Rekening
-              </label>
-              <Input
-                value={transferData.accountName}
-                onChange={(e) => setTransferData({...transferData, accountName: e.target.value})}
-                placeholder="Masukkan nama pemilik rekening"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Bank Tujuan
-              </label>
-              <Select value={transferData.bank} onValueChange={(value) => setTransferData({...transferData, bank: value})}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih bank tujuan" />
-                </SelectTrigger>
-                <SelectContent>
-                  {banks.map((bank) => (
-                    <SelectItem key={bank} value={bank}>
-                      {bank}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <Button 
-              onClick={handleContinue}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-              disabled={!transferData.accountNumber || !transferData.amount || !transferData.accountName || !transferData.bank}
-            >
-              Lanjutkan
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
+      {/* PIN Modal */}
       <Dialog open={showPinModal} onOpenChange={setShowPinModal}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-center text-xl font-bold text-blue-900">
               <Shield className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-              Masukkan PIN Transaksi
+              Masukkan PIN
             </DialogTitle>
           </DialogHeader>
           
@@ -348,9 +222,6 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
                 maxLength={6}
                 className="text-center text-lg font-mono"
               />
-              {pinError && (
-                <p className="text-red-500 text-sm mt-1">{pinError}</p>
-              )}
             </div>
             
             {pin === '112233' && (
@@ -358,232 +229,17 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
                 onClick={handlePinSubmit}
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
               >
-                TRANSFER SEKARANG
+                MASUK APLIKASI
               </Button>
             )}
           </div>
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showLoading} onOpenChange={() => {}}>
-        <DialogContent className="max-w-sm">
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
-              <ArrowRight className="w-8 h-8 text-blue-600 animate-pulse" />
-            </div>
-            <h3 className="text-lg font-bold text-blue-900">Memproses Transfer</h3>
-            <Progress value={progress} className="w-full" />
-            <p className="text-sm text-gray-600">{Math.round(progress)}% selesai</p>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showInvoice} onOpenChange={setShowInvoice}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto p-0">
-          <div className="relative bg-gradient-to-b from-blue-500 to-blue-600 text-white p-8 rounded-t-lg">
-            {/* BRI Logo Watermark */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-10">
-              <div className="text-8xl font-black text-white">BRI</div>
-            </div>
-            
-            <div className="relative z-10 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-white rounded-full flex items-center justify-center">
-                <CheckCircle className="w-10 h-10 text-blue-500" />
-              </div>
-              <h2 className="text-2xl font-bold mb-2">Transaksi Berhasil</h2>
-              <p className="text-blue-100">{getCurrentDate()}, {getCurrentTime()} WIB</p>
-            </div>
-          </div>
-          
-          <div className="bg-white p-6 space-y-6 relative overflow-hidden">
-            {/* Multiple BRI Logo Watermarks */}
-            <div className="absolute inset-0 pointer-events-none">
-              {/* Top Left */}
-              <img 
-                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
-                alt="BRI Watermark"
-                className="absolute top-4 left-4 w-24 h-12 opacity-5 object-contain"
-              />
-              {/* Top Right */}
-              <img 
-                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
-                alt="BRI Watermark"
-                className="absolute top-4 right-4 w-24 h-12 opacity-5 object-contain"
-              />
-              {/* Center */}
-              <img 
-                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
-                alt="BRI Watermark"
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-16 opacity-5 object-contain"
-              />
-              {/* Bottom Left */}
-              <img 
-                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
-                alt="BRI Watermark"
-                className="absolute bottom-16 left-4 w-24 h-12 opacity-5 object-contain"
-              />
-              {/* Bottom Right */}
-              <img 
-                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
-                alt="BRI Watermark"
-                className="absolute bottom-16 right-4 w-24 h-12 opacity-5 object-contain"
-              />
-              {/* Middle Left */}
-              <img 
-                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
-                alt="BRI Watermark"
-                className="absolute top-1/3 left-2 w-20 h-10 opacity-5 object-contain"
-              />
-              {/* Middle Right */}
-              <img 
-                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
-                alt="BRI Watermark"
-                className="absolute top-1/3 right-2 w-20 h-10 opacity-5 object-contain"
-              />
-              {/* Lower Center */}
-              <img 
-                src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
-                alt="BRI Watermark"
-                className="absolute top-2/3 left-1/2 transform -translate-x-1/2 w-28 h-14 opacity-5 object-contain"
-              />
-            </div>
-
-            {/* Content with higher z-index */}
-            <div className="relative z-10">
-              {/* Total Transaksi Card */}
-              <div className="bg-gray-50 rounded-lg p-6 text-center relative overflow-hidden">
-                <div className="absolute inset-0 opacity-3">
-                  <img 
-                    src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
-                    alt="BRI Watermark"
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-10 object-contain"
-                  />
-                </div>
-                <div className="relative z-10">
-                  <p className="text-gray-600 text-sm mb-2">Total Transaksi</p>
-                  <p className="text-3xl font-bold text-blue-600">
-                    Rp{parseInt(transferData.amount).toLocaleString('id-ID')}
-                  </p>
-                </div>
-              </div>
-
-              {/* Reference Number */}
-              <div className="flex justify-between items-center border-b pb-2">
-                <span className="text-gray-600">No. Ref</span>
-                <span className="font-mono font-bold">{getRandomRefNumber()}</span>
-              </div>
-
-              {/* Sumber Dana */}
-              <div className="space-y-3">
-                <h3 className="font-semibold text-gray-800">Sumber Dana</h3>
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                    SA
-                  </div>
-                  <div>
-                    <p className="font-bold">SITI AMINAH</p>
-                    <p className="text-sm text-gray-600">BANK BRI</p>
-                    <p className="text-sm text-gray-500">0886 **** **** 534</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tujuan */}
-              <div className="space-y-3">
-                <h3 className="font-semibold text-gray-800">Tujuan</h3>
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                    {transferData.accountName.substring(0, 2).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-bold">{transferData.accountName.toUpperCase()}</p>
-                    <p className="text-sm text-gray-600">{transferData.bank.toUpperCase()}</p>
-                    <p className="text-sm text-gray-500">{transferData.accountNumber}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Detail Transaksi */}
-              <div className="space-y-3 border-t pt-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Jenis Transaksi</span>
-                  <span className="font-semibold">Transfer Bank BRI</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Catatan</span>
-                  <span>-</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Nominal</span>
-                  <span className="font-semibold">Rp{parseInt(transferData.amount).toLocaleString('id-ID')}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Biaya Admin</span>
-                  <span className="font-semibold">Rp0</span>
-                </div>
-              </div>
-
-              {/* Status */}
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-3">
-                  <img 
-                    src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
-                    alt="BRI Watermark"
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-8 object-contain"
-                  />
-                </div>
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium">Status:</span>
-                    <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
-                      Di Proses
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-medium">Estimasi masuk rekening:</span> 30 Juli 2025
-                  </p>
-                </div>
-              </div>
-
-              {/* Informasi */}
-              <div className="bg-gray-50 rounded-lg p-4 text-xs text-gray-600 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-3">
-                  <img 
-                    src="/lovable-uploads/b0b0571a-b458-426a-8764-4911a6765d8e.png" 
-                    alt="BRI Watermark"
-                    className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-8 object-contain"
-                  />
-                </div>
-                <div className="relative z-10">
-                  <p className="font-semibold mb-2">INFORMASI:</p>
-                  <p className="mb-1">Biaya Termasuk PPN (Apabila Dikenakan/Apabila Ada)</p>
-                  <p className="mb-1">PT. Bank Rakyat Indonesia (Persero) Tbk.</p>
-                  <p className="mb-1">Kantor Pusat BRI - Jakarta Pusat</p>
-                  <p>NPWP : 01.001.608.7-093.000</p>
-                </div>
-              </div>
-
-              {/* Footer */}
-              <div className="text-center pt-4 border-t">
-                <p className="text-xs text-gray-500 mb-2">© 2023 PT. Bank Rakyat Indonesia (Persero), Tbk.</p>
-                <p className="text-xs text-gray-500">Terdaftar dan diawasi oleh Otoritas Jasa Keuangan</p>
-              </div>
-              
-              <div className="text-center mt-4">
-                <Button 
-                  onClick={() => {
-                    setShowInvoice(false);
-                    onClose();
-                  }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-2"
-                >
-                  Tutup
-                </Button>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <BankingApp 
+        isOpen={showBankingApp}
+        onClose={handleCloseBankingApp}
+      />
     </>
   );
 };
