@@ -319,14 +319,13 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
               />
             </div>
             
-            {pin === '112233' && (
-              <Button 
-                onClick={handlePinSubmit}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
-              >
-                TRANSFER SEKARANG
-              </Button>
-            )}
+            <Button 
+              onClick={handlePinSubmit}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
+              disabled={pin !== '112233'}
+            >
+              TRANSFER SEKARANG
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

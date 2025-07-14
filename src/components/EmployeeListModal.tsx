@@ -27,44 +27,20 @@ interface EmployeeDetailModalProps {
   employeeName: string;
 }
 
-interface TransferData {
-  accountNumber: string;
-  amount: string;
-  accountName: string;
-  bank: string;
-}
-
-const banks = [
-  "Bank Central Asia (BCA)",
-  "Bank Mandiri",
-  "Bank Negara Indonesia (BNI)",
-  "Bank Rakyat Indonesia (BRI)",
-  "Bank Tabungan Negara (BTN)",
-  "Bank Danamon",
-  "Bank CIMB Niaga",
-  "Bank Permata",
-  "Bank Maybank Indonesia",
-  "Bank OCBC NISP",
-  "Bank Panin",
-  "Bank UOB Indonesia",
-  "Bank Mega",
-  "Bank Bukopin",
-  "Bank Sinarmas"
-];
-
 const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClose, employeeName }) => {
   const [showPinModal, setShowPinModal] = useState(false);
   const [showBankingApp, setShowBankingApp] = useState(false);
   const [pin, setPin] = useState('');
   const { toast } = useToast();
 
-  console.log('EmployeeDetailModal state:', { showPinModal, showBankingApp, employeeName });
+  console.log('EmployeeDetailModal state:', { showPinModal, showBankingApp, employeeName, isOpen });
 
   const isConfirmedEmployee = employeeName === 'Rama Verdianto A/n Siti Aminah' || employeeName === 'Siti Aminah';
 
   const handleEmployeeClick = () => {
     console.log('Employee clicked:', employeeName, 'isConfirmed:', isConfirmedEmployee);
     if (isConfirmedEmployee) {
+      console.log('Opening PIN modal');
       setShowPinModal(true);
     }
   };
@@ -72,12 +48,18 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
   const handlePinSubmit = () => {
     console.log('PIN submit clicked, PIN:', pin);
     if (pin === '112233') {
+      console.log('Correct PIN, transitioning to banking app');
       setShowPinModal(false);
-      onClose(); // Close the detail modal first
+      setPin('');
+      
+      // Close detail modal first
+      onClose();
+      
+      // Small delay then open banking app
       setTimeout(() => {
-        console.log('Setting showBankingApp to true');
-        setShowBankingApp(true); // Then show banking app
-      }, 300);
+        console.log('Opening banking app');
+        setShowBankingApp(true);
+      }, 100);
     } else {
       toast({
         title: "PIN Salah",
@@ -92,6 +74,14 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
     setShowBankingApp(false);
     setPin('');
   };
+
+  // Reset states when modal closes
+  React.useEffect(() => {
+    if (!isOpen) {
+      setShowPinModal(false);
+      setPin('');
+    }
+  }, [isOpen]);
 
   return (
     <>
@@ -247,7 +237,6 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
       </Dialog>
 
       {/* Banking App */}
-      {console.log('About to render BankingApp with showBankingApp:', showBankingApp)}
       <BankingApp 
         isOpen={showBankingApp}
         onClose={handleCloseBankingApp}
