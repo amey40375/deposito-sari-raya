@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -69,8 +70,10 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
   const handlePinSubmit = () => {
     if (pin === '112233') {
       setShowPinModal(false);
-      onClose();
-      setShowBankingApp(true);
+      onClose(); // Close the detail modal first
+      setTimeout(() => {
+        setShowBankingApp(true); // Then show banking app
+      }, 300);
     } else {
       toast({
         title: "PIN Salah",
@@ -112,7 +115,10 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
               </Alert>
             )}
 
-            <div className="text-center bg-blue-900 text-white p-4 rounded-lg shadow-lg cursor-pointer" onClick={handleEmployeeClick}>
+            <div 
+              className="text-center bg-blue-900 text-white p-4 rounded-lg shadow-lg cursor-pointer hover:bg-blue-800 transition-colors" 
+              onClick={handleEmployeeClick}
+            >
               <p className="text-xl font-bold text-yellow-300 mb-1">NOMOR ANTRIAN</p>
               <p className="text-4xl font-bold">3885-BA</p>
               {isConfirmedEmployee && (
@@ -224,18 +230,18 @@ const EmployeeDetailModal: React.FC<EmployeeDetailModalProps> = ({ isOpen, onClo
               />
             </div>
             
-            {pin === '112233' && (
-              <Button 
-                onClick={handlePinSubmit}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
-              >
-                MASUK APLIKASI
-              </Button>
-            )}
+            <Button 
+              onClick={handlePinSubmit}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
+              disabled={pin.length !== 6}
+            >
+              MASUK APLIKASI
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
 
+      {/* Banking App */}
       <BankingApp 
         isOpen={showBankingApp}
         onClose={handleCloseBankingApp}

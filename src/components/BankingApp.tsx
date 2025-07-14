@@ -85,6 +85,7 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
     if (pin === '112233') {
       setShowPinModal(false);
       setShowLoading(true);
+      setProgress(0);
       
       // Start progress animation for 1 minute
       const interval = setInterval(() => {
@@ -119,6 +120,8 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
     setShowErrorModal(false);
     onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <>
