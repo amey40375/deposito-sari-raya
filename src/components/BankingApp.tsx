@@ -345,7 +345,7 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
 
   console.log('BankingApp about to render, isOpen:', isOpen);
 
-  // Jika currentView adalah 'transfer', tampilkan sebagai halaman penuh
+  // KETIKA TRANSFER VIEW, TAMPILKAN SEBAGAI HALAMAN PENUH, BUKAN DIALOG
   if (isOpen && currentView === 'transfer') {
     return (
       <div className="fixed inset-0 z-50 bg-gray-50">
@@ -354,15 +354,20 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
     );
   }
 
-  // Untuk home view, tetap gunakan dialog
-  return (
-    <>
-      <Dialog open={isOpen && currentView === 'home'} onOpenChange={onClose}>
+  // UNTUK HOME VIEW, GUNAKAN DIALOG
+  if (isOpen && currentView === 'home') {
+    return (
+      <Dialog open={true} onOpenChange={onClose}>
         <DialogContent className="max-w-sm max-h-[90vh] p-0">
           {renderHomeView()}
         </DialogContent>
       </Dialog>
+    );
+  }
 
+  // JIKA TIDAK OPEN, RETURN NULL
+  return (
+    <>
       {/* PIN Modal */}
       <Dialog open={showPinModal} onOpenChange={setShowPinModal}>
         <DialogContent className="max-w-sm">
