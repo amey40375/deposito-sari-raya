@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -239,6 +238,20 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
           </button>
           <h1 className="text-lg font-bold">Transfer Dana</h1>
           <div className="w-16"></div>
+        </div>
+      </div>
+
+      {/* Notification Banner */}
+      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mx-4 mt-4 rounded-lg">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <Shield className="h-5 w-5 text-yellow-400" />
+          </div>
+          <div className="ml-3">
+            <p className="text-sm text-yellow-800 font-medium">
+              Pengiriman Buku Tabungan & ATM Tidak Terlaksana dikarenakan Anda Tidak Memenuhi Syarat Sistem Kami, Silahkan Lakukan Transfer Ke rekening Mana Saja Yang anda Miliki
+            </p>
+          </div>
         </div>
       </div>
 
