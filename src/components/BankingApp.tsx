@@ -345,11 +345,21 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
 
   console.log('BankingApp about to render, isOpen:', isOpen);
 
+  // Jika currentView adalah 'transfer', tampilkan sebagai halaman penuh
+  if (isOpen && currentView === 'transfer') {
+    return (
+      <div className="fixed inset-0 z-50 bg-gray-50">
+        {renderTransferView()}
+      </div>
+    );
+  }
+
+  // Untuk home view, tetap gunakan dialog
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
+      <Dialog open={isOpen && currentView === 'home'} onOpenChange={onClose}>
         <DialogContent className="max-w-sm max-h-[90vh] p-0">
-          {currentView === 'home' ? renderHomeView() : renderTransferView()}
+          {renderHomeView()}
         </DialogContent>
       </Dialog>
 
