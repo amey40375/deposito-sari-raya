@@ -136,9 +136,9 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
   };
 
   const renderHomeView = () => (
-    <>
+    <div className="h-full bg-gray-50">
       {/* Header */}
-      <div className="bg-blue-600 text-white p-4 rounded-t-lg">
+      <div className="bg-blue-600 text-white p-4">
         <div className="flex items-center justify-between">
           <h1 className="text-lg font-bold">BRI Deposit Mobile</h1>
           <div className="flex items-center space-x-2">
@@ -205,7 +205,7 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="bg-white border-t border-gray-200 p-2">
+      <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-2">
         <div className="flex justify-around">
           <button className="flex flex-col items-center p-2 text-blue-600">
             <Home className="w-5 h-5 mb-1" />
@@ -225,13 +225,13 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 
   const renderTransferView = () => (
-    <>
+    <div className="h-full bg-gray-50 overflow-y-auto">
       {/* Header */}
-      <div className="bg-blue-600 text-white p-4 rounded-t-lg">
+      <div className="bg-blue-600 text-white p-4">
         <div className="flex items-center justify-between">
           <button onClick={handleBackToHome} className="flex items-center space-x-2">
             <ArrowLeft className="w-5 h-5" />
@@ -243,7 +243,7 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
       </div>
 
       {/* Transfer Form */}
-      <div className="p-4 space-y-4">
+      <div className="p-4 space-y-4 pb-20">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Nomor Rekening Tujuan
@@ -340,7 +340,7 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 
   console.log('BankingApp about to render, isOpen:', isOpen);
@@ -348,7 +348,7 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-sm max-h-[90vh] overflow-y-auto p-0">
+        <DialogContent className="max-w-sm max-h-[90vh] p-0">
           {currentView === 'home' ? renderHomeView() : renderTransferView()}
         </DialogContent>
       </Dialog>
