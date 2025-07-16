@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -18,7 +19,8 @@ import {
   History,
   Phone,
   Building2,
-  ArrowLeft
+  ArrowLeft,
+  CheckCircle
 } from 'lucide-react';
 
 interface BankingAppProps {
@@ -58,6 +60,7 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
   const [showPinModal, setShowPinModal] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [transferData, setTransferData] = useState<TransferData>({
     accountNumber: '',
     amount: '200350000',
@@ -69,7 +72,8 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
   const { toast } = useToast();
 
   const depositBalance = 200350000;
-  const savingsBalance = 0;
+  const savingsBalance = 0; // Current savings balance
+  const requiredSavingsBalance = depositBalance * 0.015; // 1.5% of deposit
 
   const handleTransferClick = () => {
     console.log('Transfer clicked');
@@ -100,16 +104,22 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
       setShowLoading(true);
       setProgress(0);
       
-      // Start progress animation for 1 minute
+      // Start progress animation for 15 seconds
       const interval = setInterval(() => {
         setProgress(prev => {
           if (prev >= 100) {
             clearInterval(interval);
             setShowLoading(false);
-            setShowErrorModal(true);
+            
+            // Check if savings balance meets requirement
+            if (savingsBalance >= requiredSavingsBalance) {
+              setShowSuccessModal(true);
+            } else {
+              setShowErrorModal(true);
+            }
             return 100;
           }
-          return prev + (100/600); // 60 seconds = 600 * 100ms
+          return prev + (100/150); // 15 seconds = 150 * 100ms
         });
       }, 100);
     } else {
@@ -125,17 +135,23 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
     }).format(amount);
   };
 
   const handleCloseError = () => {
     setShowErrorModal(false);
+    setCurrentView('home');
+  };
+
+  const handleCloseSuccess = () => {
+    setShowSuccessModal(false);
     onClose();
   };
 
   const renderHomeView = () => (
-    <div className="h-full bg-gray-50">
+    <div className="h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-blue-600 text-white p-4">
         <div className="flex items-center justify-between">
@@ -228,7 +244,7 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
   );
 
   const renderTransferView = () => (
-    <div className="h-full bg-gray-50 overflow-y-auto">
+    <div className="h-screen bg-gray-50 overflow-y-auto">
       {/* Header */}
       <div className="bg-blue-600 text-white p-4">
         <div className="flex items-center justify-between">
@@ -290,13 +306,13 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Nominal Transfer
           </label>
-          <Input
-            value={transferData.amount}
-            onChange={(e) => setTransferData({...transferData, amount: e.target.value})}
-            placeholder="Masukkan nominal"
-            type="number"
-            disabled
-          />
+          <div className="relative">
+            <Input
+              value={formatCurrency(parseInt(transferData.amount))}
+              readOnly
+              className="bg-gray-100"
+            />
+          </div>
           <p className="text-xs text-gray-500 mt-1">*Sesuai saldo deposito</p>
         </div>
         
@@ -318,151 +334,159 @@ const BankingApp: React.FC<BankingAppProps> = ({ isOpen, onClose }) => {
         >
           Lanjutkan
         </Button>
-
-        {/* Transfer Regulations */}
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 className="text-lg font-bold text-blue-900 mb-3">Peraturan Transfer Dana dari Deposito</h3>
-          
-          <div className="space-y-4 text-sm text-gray-700">
-            <div>
-              <h4 className="font-semibold text-blue-800">1. Tidak Ada Limit Minimal Transfer</h4>
-              <p>Pengguna bebas melakukan transfer dari dana deposito ke rekening tabungan tanpa batasan jumlah minimal.</p>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-blue-800">2. Saldo Tabungan Wajib Tersisa (Ngendap)</h4>
-              <p>Setelah proses transfer dilakukan, rekening tabungan wajib menyisakan saldo minimal sebesar 1,5% dari total nilai deposito sebagai dana mengendap.</p>
-              
-              <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded">
-                <p className="font-medium">Contoh:</p>
-                <p>Jika total nilai deposito adalah Rp100.000.000, maka:</p>
-                <p>• Saldo tabungan harus tersisa minimal Rp1.500.000</p>
-                <p>• Jumlah maksimal yang bisa ditransfer = (Saldo tabungan saat ini - Rp1.500.000)</p>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-blue-800">3. Tujuan Peraturan</h4>
-              <p>Ketentuan ini diberlakukan untuk menjaga kestabilan saldo pengguna serta mendukung keamanan transaksi berkelanjutan.</p>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-blue-800">4. Sistem Otomatis Cek Saldo</h4>
-              <p>Sistem akan otomatis menolak permintaan transfer apabila saldo tabungan yang tersisa setelah transfer kurang dari batas minimum 1,5% tersebut.</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
 
-  console.log('BankingApp about to render, isOpen:', isOpen);
+  // Return the appropriate view based on isOpen state
+  if (!isOpen) {
+    return null;
+  }
 
-  // KETIKA TRANSFER VIEW, TAMPILKAN SEBAGAI HALAMAN PENUH, BUKAN DIALOG
-  if (isOpen && currentView === 'transfer') {
+  if (currentView === 'home') {
+    return renderHomeView();
+  }
+
+  if (currentView === 'transfer') {
     return (
-      <div className="fixed inset-0 z-50 bg-gray-50">
+      <>
         {renderTransferView()}
-      </div>
+        
+        {/* PIN Modal */}
+        <Dialog open={showPinModal} onOpenChange={setShowPinModal}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="text-center text-xl font-bold text-blue-900">
+                <Shield className="w-6 h-6 mx-auto mb-2 text-blue-600" />
+                Masukkan PIN Transaksi
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div>
+                <Input
+                  type="password"
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value)}
+                  placeholder="Masukkan PIN 6 digit"
+                  maxLength={6}
+                  className="text-center text-lg font-mono"
+                />
+              </div>
+              
+              <Button 
+                onClick={handlePinSubmit}
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
+                disabled={pin.length !== 6}
+              >
+                TRANSFER SEKARANG
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Loading Modal */}
+        <Dialog open={showLoading} onOpenChange={() => {}}>
+          <DialogContent className="max-w-sm">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
+                <ArrowRight className="w-8 h-8 text-blue-600 animate-pulse" />
+              </div>
+              <h3 className="text-lg font-bold text-blue-900">Mohon Tunggu sebentar</h3>
+              <p className="text-sm text-gray-600">Kami sedang mengecek ketersediaan Transfer</p>
+              <Progress value={progress} className="w-full" />
+              <p className="text-sm text-gray-600">{Math.round(progress)}% selesai</p>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Success Modal */}
+        <Dialog open={showSuccessModal} onOpenChange={() => {}}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-center text-xl font-bold text-green-600 mb-4">
+                <CheckCircle className="w-8 h-8 mx-auto mb-2" />
+                Transfer Berhasil!
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <p className="text-sm text-green-800 text-center">
+                  Transfer dana sebesar <strong>{formatCurrency(parseInt(transferData.amount))}</strong> berhasil dilakukan ke rekening <strong>{transferData.accountName}</strong>
+                </p>
+              </div>
+              
+              <Button 
+                onClick={handleCloseSuccess}
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+              >
+                Selesai
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Error Modal */}
+        <Dialog open={showErrorModal} onOpenChange={() => {}}>
+          <DialogContent className="max-w-md max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-center text-xl font-bold text-red-600 mb-4">
+                📌 Peraturan Transfer Dana dari Deposito
+              </DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div className="space-y-4 text-sm">
+                <div>
+                  <h4 className="font-bold text-gray-800 mb-2">1. Tidak Ada Limit Minimal Transfer</h4>
+                  <p className="text-gray-700">Pengguna bebas melakukan transfer dari dana deposito ke rekening tabungan tanpa batasan jumlah minimal.</p>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-gray-800 mb-2">2. Saldo Tabungan Wajib Tersisa (Ngendap)</h4>
+                  <p className="text-gray-700 mb-2">Setelah proses transfer dilakukan, rekening tabungan wajib menyisakan saldo minimal sebesar 1,5% dari total nilai deposito sebagai dana mengendap.</p>
+                  
+                  <div className="bg-blue-50 border border-blue-200 rounded p-3">
+                    <p className="font-medium text-blue-800 mb-1">Contoh:</p>
+                    <p className="text-blue-700 text-xs mb-1">Jika total nilai deposito adalah {formatCurrency(100000000)}, maka:</p>
+                    <p className="text-blue-700 text-xs mb-1">• Saldo tabungan harus tersisa minimal {formatCurrency(1500000)}</p>
+                    <p className="text-blue-700 text-xs">• Jumlah maksimal yang bisa ditransfer = (Saldo tabungan saat ini - {formatCurrency(1500000)})</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-gray-800 mb-2">3. Tujuan Peraturan</h4>
+                  <p className="text-gray-700">Ketentuan ini diberlakukan untuk menjaga kestabilan saldo pengguna serta mendukung keamanan transaksi berkelanjutan.</p>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-gray-800 mb-2">4. Sistem Otomatis Cek Saldo</h4>
+                  <p className="text-gray-700">Sistem akan otomatis menolak permintaan transfer apabila saldo tabungan yang tersisa setelah transfer kurang dari batas minimum 1,5% tersebut.</p>
+                </div>
+              </div>
+              
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-800">
+                  <strong>Saldo tabungan Anda saat ini:</strong> {formatCurrency(savingsBalance)}<br/>
+                  <strong>Minimal saldo yang diperlukan:</strong> {formatCurrency(requiredSavingsBalance)}
+                </p>
+              </div>
+              
+              <Button 
+                onClick={handleCloseError}
+                className="w-full bg-gray-600 hover:bg-gray-700 text-white"
+              >
+                Tutup
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </>
     );
   }
 
-  // UNTUK HOME VIEW, GUNAKAN DIALOG
-  if (isOpen && currentView === 'home') {
-    return (
-      <Dialog open={true} onOpenChange={onClose}>
-        <DialogContent className="max-w-sm max-h-[90vh] p-0">
-          {renderHomeView()}
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  // JIKA TIDAK OPEN, RETURN NULL
-  return (
-    <>
-      {/* PIN Modal */}
-      <Dialog open={showPinModal} onOpenChange={setShowPinModal}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl font-bold text-blue-900">
-              <Shield className="w-6 h-6 mx-auto mb-2 text-blue-600" />
-              Masukkan PIN Transaksi
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div>
-              <Input
-                type="password"
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
-                placeholder="Masukkan PIN 6 digit"
-                maxLength={6}
-                className="text-center text-lg font-mono"
-              />
-            </div>
-            
-            <Button 
-              onClick={handlePinSubmit}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
-              disabled={pin !== '112233'}
-            >
-              TRANSFER SEKARANG
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Loading Modal */}
-      <Dialog open={showLoading} onOpenChange={() => {}}>
-        <DialogContent className="max-w-sm">
-          <div className="text-center space-y-4">
-            <div className="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
-              <ArrowRight className="w-8 h-8 text-blue-600 animate-pulse" />
-            </div>
-            <h3 className="text-lg font-bold text-blue-900">Sedang Memproses Transfer Anda</h3>
-            <Progress value={progress} className="w-full" />
-            <p className="text-sm text-gray-600">{Math.round(progress)}% selesai</p>
-            <p className="text-xs text-gray-500">Mohon tunggu, proses sedang berlangsung...</p>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Error Modal */}
-      <Dialog open={showErrorModal} onOpenChange={() => {}}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl font-bold text-red-600 mb-4">
-              Transfer Tidak Berhasil
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-sm text-red-800 leading-relaxed">
-                <strong>Mohon Maaf</strong> Proses Transfer Belum Berhasil Dikarenakan Anda Belum Mematuhi Peraturan Kami, Karena kami Periksa Bahwa Anda Tidak Memiliki Saldo Tabungan, Karena Aturan Yang Berlaku Bahwasannya Anda Menarik DANA Deposito Minimal Anda Memiliki Saldo Tabungan Sebesar 1,5% Dari Nominal Deposito Anda.
-              </p>
-            </div>
-            
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-              <p className="text-sm text-yellow-800">
-                <strong>Minimal Saldo Tabungan yang Diperlukan:</strong><br/>
-                {formatCurrency(depositBalance * 0.015)}
-              </p>
-            </div>
-            
-            <Button 
-              onClick={handleCloseError}
-              className="w-full bg-gray-600 hover:bg-gray-700 text-white"
-            >
-              Close
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
+  return null;
 };
 
 export default BankingApp;
