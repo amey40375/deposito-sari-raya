@@ -33,6 +33,7 @@ const Index = () => {
       setShowPinModal(true);
     } else {
       setSelectedCompany(company);
+      setIsCompanyModalOpen(false);
       setIsEmployeeModalOpen(true);
     }
   };
